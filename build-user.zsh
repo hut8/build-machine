@@ -1,5 +1,6 @@
 #!/usr/bin/zsh
 # Set up my regular user account
+# Must be done interactively
 cd
 
 # SSH Key
@@ -17,5 +18,6 @@ git clone git@github.com:hut8/dotfiles
 git clone --recursive git@github.com:hut8/prezto .zprezto
 setopt EXTENDED_GLOB
 for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
+  rm -f "${ZDOTDIR:-$HOME}/.${rcfile:t}"
   ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
 done
