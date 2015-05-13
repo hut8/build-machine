@@ -3,7 +3,7 @@
 
 # Packages
 apt-get update
-apt-get dist-upgrade
+apt-get dist-upgrade -y
 apt-get install -y \
     cowsay git build-essential zsh htop iotop tmux rsync python-pip python3-pip \
     silversearcher-ag speedometer jq toilet wget curl apt-file pcregrep \
@@ -19,11 +19,11 @@ adduser liam --disabled-password --shell /usr/bin/zsh --gecos 'Liam'
 mkdir -p /home/liam/.ssh
 cp /root/.ssh/authorized_keys /home/liam/.ssh/authorized_keys
 chown -R liam:liam /home/liam/.ssh
-touch /home/liam/.zshrc
+[[ ! -f /home/liam/.zshrc ]] && touch /home/liam/.zshrc
 chown liam:liam /home/liam/.zshrc
 
 # Sudo
-echo 'liam ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/liam
+[[ ! -f "/etc/sudoers.d/liam" ]] && echo 'liam ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/liam
 
 # Mail me
 # TODO
