@@ -7,8 +7,11 @@ cd
 ssh-keygen -t ecdsa -b 521 -N ''
 
 # Upload key to Github
-auth-json="$(printf '{"title":"%s","key":"%s"}\n' "cloud-$(date +%s)" "$(cat $HOME/.ssh/id_ecdsa.pub)")"
-curl -u 'hut8' --data "${auth-json}" 'https://api.github.com/user/keys'
+auth_json="$(printf '{"title":"%s","key":"%s"}\n' "cloud-$(date +%s)" "$(cat $HOME/.ssh/id_ecdsa.pub)")"
+curl -u 'hut8' --data "${auth_json}" 'https://api.github.com/user/keys'
+
+# Git
+git config --global push.default simple
 
 # Dotfiles except zsh
 git clone git@github.com:hut8/dotfiles

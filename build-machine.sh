@@ -14,6 +14,7 @@ pip install virtualenv
 pip install virtualenvwrapper
 pip install ipython
 pip3 install ipython
+updatedb
 
 # Make my account
 adduser liam --disabled-password --shell /usr/bin/zsh --gecos 'Liam Bowen'
