@@ -10,6 +10,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAIEAmmejr3BwzboyLafUAD0hgF+YHxPZKa1bHAW6b6dZKxGL
 "
 
 debian() {
+    echo "Building for Debian Jessie"
     # Debian 8 (jessie)
     apt-get update
     apt-get dist-upgrade -y
@@ -32,18 +33,61 @@ debian() {
 
     # Make my account
     adduser liam --disabled-password --shell /usr/bin/zsh --gecos 'Liam Bowen'
-    mkdir -p /home/liam/.ssh
-    cp /root/.ssh/authorized_keys /home/liam/.ssh/authorized_keys
-    chown -R liam:liam /home/liam/.ssh
-    [[ ! -f /home/liam/.zshrc ]] && touch /home/liam/.zshrc
-    chown liam:liam /home/liam/.zshrc
-
-    # Sudo
-    if [[ ! -f "/etc/sudoers.d/liam" ]]; then
-        echo 'liam ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/liam
-    fi
 }
 
+arch() {
+    echo "Building for Arch"
+    pacman -Syu
+    pacman -S cowsay git zsh htop iotop tmux rsync python-pip the_silver_searcher \
+        jq figlet wget curl emacs-nox pv mlocate dnsutils tig
+    pip install --upgrade pip
+    pip install virtualenv
+    pip install virtualenvwrapper
 
-distro="$(lsb_release --short --id)"
-[[ $distro == "Debian" ]] && debian()
+    # Make my account
+    useradd -m -G wheel -s /usr/bin/zsh liam
+}
+
+common() {
+    echo "Building common stuff"
+
+    # Sudo
+    if [[ ! -f "/etc/sudoers.d/liam" ]];
+    then
+        echo 'liam ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/liam
+    fi
+
+    # ssh key stuff
+    mkdir -p /root/.ssh
+    if [[ ! -f /root/.ssh/authorized_keys ]];
+    then
+        echo "${authorized_keys}" >> /root/.ssh/authorized_keys
+    fi
+    mkdir -p /home/liam/.ssh
+    if [[ ! -f /home/liam/.ssh/authorized_keys ]];
+    then
+        echo "${authorized_keys}" >> /home/liam/.ssh/authorized_keys
+    fi
+
+    # this shuts up zsh the first time I start it:
+    [[ ! -f /home/liam/.zshrc ]] && touch /home/liam/.zshrc
+
+    # fix permissions
+    chown -R liam:liam /home/liam/
+}
+
+is_debian() {
+    local distro="$(lsb_release --short --id)"
+    [[ $distro == "Debian" ]]
+    return $?
+}
+
+is_arch() {
+    uname_r="$(uname -r)"
+    [[ $uname_r =~ 'ARCH' ]]
+    return $?
+}
+
+is_debian && debian
+is_arch && arch
+common
