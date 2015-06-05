@@ -10,20 +10,22 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAIEAmmejr3BwzboyLafUAD0hgF+YHxPZKa1bHAW6b6dZKxGL
 "
 
 debian() {
-    echo "Building for Debian Jessie"
+    echo 'Building for Debian Jessie'
+    local packages='cowsay git build-essential zsh htop iotop tmux rsync python-pip'
+    packages+='python3-pip silversearcher-ag speedometer jq toilet wget curl apt-file'
+    packages+='pcregrep emacs-nox emacs-goodies-el pv sudo locate python-dev'
+    packages+='python3-dev python3.4-venv dnsutils tig'
     # Debian 8 (jessie)
     apt-get update
     apt-get dist-upgrade -y
-    apt-get install -y \
-        cowsay git build-essential zsh htop iotop tmux rsync python-pip python3-pip \
-        silversearcher-ag speedometer jq toilet wget curl apt-file pcregrep \
-        emacs-nox emacs-goodies-el pv sudo locate python-dev python3-dev \
-        python3.4-venv dnsutils tig
+    apt-get install -y ${packages}
     apt-file update
     pip install virtualenv
     pip install virtualenvwrapper
     pip install ipython
     pip3 install ipython
+
+    # Install Go
 
     # MongoDB
     # Yes, this should say wheezy; they didn't have a jessie build
@@ -37,9 +39,11 @@ debian() {
 
 arch() {
     echo "Building for Arch"
+    local packages="cowsay git zsh htop iotop tmux rsync python-pip"
+    packages+="the_silver_searcher jq figlet wget curl emacs-nox pv mlocate"
+    packages+="dnsutils tig go mercurial"
     pacman -Syu
-    pacman -S cowsay git zsh htop iotop tmux rsync python-pip the_silver_searcher \
-        jq figlet wget curl emacs-nox pv mlocate dnsutils tig
+    pacman -S --noconfirm ${packages}
     pip install --upgrade pip
     pip install virtualenv
     pip install virtualenvwrapper
