@@ -18,8 +18,8 @@
         - git
         - htop
         - iotop
-        - libcurl4-openssl-dev
         - jq
+        - libcurl4-openssl-dev
         - nodejs
         - pcregrep
         - pv
@@ -30,6 +30,7 @@
         - rsync
         - silversearcher-ag
         - speedometer
+        - texinfo
         - tig
         - tmux
         - toilet
