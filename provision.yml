@@ -18,6 +18,7 @@
         - git
         - htop
         - iotop
+        - libcurl4-openssl-dev
         - jq
         - nodejs
         - pcregrep
