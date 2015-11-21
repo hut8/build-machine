@@ -1,33 +1,33 @@
 ---
-name: install latest software
-hosts: all
-user: liam
-tasks:
-  - name: clone git repository
-    git: >
-      dest=/home/liam/git
-      repo=git@github.com:git/git
-      accept_hostkey=yes
-      update=yes
+- name: install latest software
+  hosts: all
+  user: liam
+  tasks:
+    - name: clone git repository
+      git: >
+        dest=/home/liam/git
+        repo=git@github.com:git/git
+        accept_hostkey=yes
+        update=yes
 
-  - name: build and install git
-    shell: make && make install
-    args:
-      chdir: /home/liam/git
+    - name: build and install git
+      shell: make && make install
+      args:
+        chdir: /home/liam/git
 
-  - name: clone prezto
-    git: >
-      dest=/home/liam/.zprezto
-      repo=git@github.com:hut8/prezto
-      accept_hostkey=yes
-      update=yes
+    - name: clone prezto
+      git: >
+        dest=/home/liam/.zprezto
+        repo=git@github.com:hut8/prezto
+        accept_hostkey=yes
+        update=yes
 
-  - name: install prezto
-    script: 'install-dotfiles'
+    - name: install prezto
+      script: 'install-dotfiles'
 
-  - name: install dotfiles
-    copy: src={{ item }}
-          dest=/home/liam/{{ item }}
-    with_items:
-      - .pryrc
-      - .tmux.conf
+    - name: install dotfiles
+      copy: src={{ item }}
+            dest=/home/liam/{{ item }}
+      with_items:
+        - .pryrc
+        - .tmux.conf
