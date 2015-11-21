@@ -1,0 +1,16 @@
+---
+- name: install emacs
+  hosts: all
+  user: liam
+  tasks:
+    - name: obtain latest emacs
+      git: >-
+        dest=/home/liam/emacs
+        repo=git://git.sv.gnu.org/emacs.git
+        update=yes
+        accept_hostkey=yes
+
+    - name: configure
+      shell: ./autogen.sh && ./configure --without-x --prefix=$HOME && make
+      args:
+        chdir: /home/liam/emacs
