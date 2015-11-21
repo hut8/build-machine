@@ -4,7 +4,7 @@
   user: liam
   tasks:
     - name: clone git repository
-      git: >
+      git: >-
         dest=/home/liam/git
         repo=git@github.com:git/git
         accept_hostkey=yes
@@ -16,7 +16,7 @@
         chdir: /home/liam/git
 
     - name: clone prezto
-      git: >
+      git: >-
         dest=/home/liam/.zprezto
         repo=git@github.com:hut8/prezto
         accept_hostkey=yes
@@ -31,3 +31,10 @@
       with_items:
         - .pryrc
         - .tmux.conf
+
+    - name: install prelude
+      git: >-
+        dest=/home/liam/.emacs.d
+        repo=git@github.com:hut8/prelude
+        accept_hostkey=yes
+        update=yes
