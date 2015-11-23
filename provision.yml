@@ -50,12 +50,10 @@
   user: root
   tasks:
     - name: create user
-      user: name=liam shell=/usr/bin/zsh groups=admin,wheel,rvm append=yes
-            generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
-            ssh_key_comment=$HOSTNAME
+      user: name=liam shell=/usr/bin/zsh groups=rvm append=yes
 
     - name: add authorized keys
-      authorized_key: user=liam key="{{ lookup('file', 'authorized_keys') }}"
+      authorized_key: user=liam key=https://github.com/hut8.keys
 
 - name: make swapfile
   hosts: prims
