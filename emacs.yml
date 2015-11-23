@@ -10,7 +10,12 @@
         update=yes
         accept_hostkey=yes
 
-    - name: configure
+    - name: configure and build
       shell: ./autogen.sh && ./configure --without-x --prefix=$HOME && make
+      args:
+        chdir: /home/liam/emacs
+
+    - name: install to home directory
+      shell: make install
       args:
         chdir: /home/liam/emacs
