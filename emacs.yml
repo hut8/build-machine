@@ -9,13 +9,13 @@
         repo=git://git.sv.gnu.org/emacs.git
         update=yes
         accept_hostkey=yes
+        version=tags/emacs-24.5
 
     - name: configure and build
-      shell: ./autogen.sh && ./configure --without-x --prefix=$HOME && make
-      args:
-        chdir: /home/liam/emacs
-
-    - name: install to home directory
-      shell: make install
+      shell: >-
+        ./autogen.sh && \
+        ./configure --without-x --without-makeinfo --prefix=$HOME && \
+        make bootstrap && \
+        make install
       args:
         chdir: /home/liam/emacs
