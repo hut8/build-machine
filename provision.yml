@@ -60,23 +60,29 @@
       authorized_key: user=root key=https://github.com/hut8.keys
 
 - name: enable passwordless sudo
-  copy: src=sudoers
-        dest=/etc/sudoers.d/liam
-        mode=440
+  hosts: all
+  user: root
+  tasks:
+    - copy: src=sudoers
+            dest=/etc/sudoers.d/liam
+            mode=440
 
 - name: enable agent forwarding
-  lineinfile: dest=/etc/ssh/sshd_config
-              state=present
-              regexp='^AllowAgentForwarding'
-              line='AllowAgentForwarding yes'
-  notify: restart sshd
+  hosts: all
+  user: root
+  tasks:
+    - lineinfile: dest=/etc/ssh/sshd_config
+                  state=present
+                  regexp='^AllowAgentForwarding'
+                  line='AllowAgentForwarding yes'
+      notify: restart sshd
 
   handlers:
     - name: restart sshd
       service: name=ssh state=restarted
 
 - name: make swapfile
-  hosts: prims
+  hosts: all
   user: root
   roles:
     - { role: kamaln7.swapfile, swapfile_use_dd: True, swapfile_size: 2048 }
