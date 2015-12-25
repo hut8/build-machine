@@ -86,3 +86,25 @@
   user: root
   roles:
     - { role: kamaln7.swapfile, swapfile_use_dd: True, swapfile_size: 2048 }
+
+- name: install go
+  hosts: all
+  user: root
+  tasks:
+    - name: download go binary distribution
+      get_url: >-
+        dest='/tmp'
+        url='https://storage.googleapis.com/golang/go1.5.2.linux-amd64.tar.gz'
+
+    - name: extract tarball
+      unarchive: >-
+        src=/tmp/go1.5.2.linux-amd64.tar.gz
+        dest=/usr/local/
+        copy=no
+
+- name: install go tools
+  hosts: all
+  user: liam
+  tasks:
+    - name: run installation script
+      script: 'install-go-tools'
