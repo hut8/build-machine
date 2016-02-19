@@ -5,7 +5,7 @@
   tasks:
     - name: clone git repository
       git: >-
-        dest=/home/liam/git
+        dest=~/git
         repo=git@github.com:git/git
         accept_hostkey=yes
         update=yes
@@ -17,7 +17,7 @@
 
     - name: clone prezto
       git: >-
-        dest=/home/liam/.zprezto
+        dest=~/.zprezto
         repo=git@github.com:hut8/prezto
         accept_hostkey=yes
         update=yes
@@ -35,8 +35,8 @@
 
     - name: obtain latest emacs
       git: >-
-        dest=/home/liam/emacs
-        repo=git://git.sv.gnu.org/emacs.git
+        dest=~/emacs
+        repo=git@github.com:emacs-mirror/emacs
         update=yes
         accept_hostkey=yes
         version=tags/emacs-24.5
