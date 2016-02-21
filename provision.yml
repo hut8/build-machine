@@ -10,6 +10,8 @@
       apt: name={{ item }} state=latest update_cache=yes
       with_items:
         - apt-file
+        - automake
+        - autoconf
         - build-essential
         - cowsay
         - curl
