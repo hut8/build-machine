@@ -21,6 +21,7 @@
         - iotop
         - jq
         - libcurl4-openssl-dev
+        - libssl-dev
         - moreutils
         - nodejs
         - pcregrep
