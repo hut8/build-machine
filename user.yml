@@ -53,4 +53,4 @@
         make && \
         make install
       args:
-        chdir: ~/emacs
+        chdir: ~/emacs-24.5
