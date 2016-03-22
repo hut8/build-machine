@@ -41,19 +41,16 @@
         update=yes
         force=yes
 
-    - name: obtain latest emacs
-      git: >-
-        dest=~/emacs
-        repo=git@github.com:emacs-mirror/emacs
-        update=yes
-        accept_hostkey=yes
-        version=tags/emacs-24.5
+    - name: retrieve emacs
+      unarchive: src=http://ftp.gnu.org/gnu/emacs/emacs-24.5.tar.gz
+                 dest=~/
+                 creates=~/emacs-24.5
+                 copy=no
 
-    - name: configure and build
+    - name: configure and build emacs
       shell: >-
-        ./autogen.sh && \
         ./configure --without-x --without-makeinfo --prefix=$HOME && \
-        make bootstrap && \
+        make && \
         make install
       args:
         chdir: ~/emacs
