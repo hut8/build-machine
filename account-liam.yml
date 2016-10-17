@@ -56,10 +56,11 @@
         force=yes
 
     - name: retrieve emacs
-      unarchive: src=http://ftp.gnu.org/gnu/emacs/emacs-24.5.tar.gz
-                 dest=~/
-                 creates=~/emacs-24.5
-                 copy=no
+      unarchive:
+        src: "http://ftp.gnu.org/gnu/emacs/emacs-25.1.tar.gz"
+        dest: "~/"
+        creates: "~/emacs-25.1"
+        copy: "no"
 
     - name: configure and build emacs
       shell: >-
@@ -67,4 +68,4 @@
         make && \
         make install
       args:
-        chdir: ~/emacs-24.5
+        chdir: ~/emacs-25.1
