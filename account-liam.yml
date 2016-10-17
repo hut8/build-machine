@@ -4,7 +4,7 @@
   user: root
   tasks:
     - name: create user
-      user: name=liam shell=/usr/bin/zsh groups=rvm append=yes
+      user: name=liam shell=/usr/bin/zsh append=yes
 
     - name: add authorized keys for liam
       authorized_key: user=liam key=https://github.com/hut8.keys
