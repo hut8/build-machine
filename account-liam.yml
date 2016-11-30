@@ -17,18 +17,6 @@
   hosts: all
   user: liam
   tasks:
-    - name: clone git repository
-      git: >-
-        dest=~/git
-        repo=git@github.com:git/git
-        accept_hostkey=yes
-        update=yes
-
-    - name: build and install git
-      shell: make && make install
-      args:
-        chdir: ~/git
-
     - name: clone prezto
       git: >-
         dest=~/.zprezto
@@ -59,8 +47,8 @@
       unarchive:
         src: "http://ftp.gnu.org/gnu/emacs/emacs-25.1.tar.gz"
         dest: "~/"
+        remote_src: yes
         creates: "~/emacs-25.1"
-        copy: "no"
 
     - name: configure and build emacs
       shell: >-
