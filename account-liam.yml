@@ -17,6 +17,13 @@
   hosts: all
   user: liam
   tasks:
+    - name: clone myself
+      git:
+        dest: ~/build-machine
+        repo: git@github.com:hut8/build-machine
+        accept_hostkey: True
+        update: True
+
     - name: clone prezto
       git: >-
         dest=~/.zprezto
@@ -29,11 +36,16 @@
       script: 'install-dotfiles'
 
     - name: install dotfiles
-      copy: src={{ item }}
-            dest=~/{{ item }}
+      file:
+        src: ~/build-machine/{{ item }}
+        dest: ~/{{ item }}
+        state: hard
       with_items:
         - .pryrc
         - .tmux.conf
+
+    - name: install go tools
+      script: 'install-go-tools'
 
     - name: install prelude
       git: >-
@@ -43,17 +55,17 @@
         update=yes
         force=yes
 
-    - name: retrieve emacs
-      unarchive:
-        src: "http://ftp.gnu.org/gnu/emacs/emacs-25.1.tar.gz"
-        dest: "~/"
-        remote_src: yes
-        creates: "~/emacs-25.1"
+    # - name: retrieve emacs
+    #   unarchive:
+    #     src: "http://ftp.gnu.org/gnu/emacs/emacs-25.1.tar.gz"
+    #     dest: "~/"
+    #     remote_src: yes
+    #     creates: "~/emacs-25.1"
 
-    - name: configure and build emacs
-      shell: >-
-        ./configure --without-x --without-makeinfo --prefix=$HOME && \
-        make && \
-        make install
-      args:
-        chdir: ~/emacs-25.1
+    # - name: configure and build emacs
+    #   shell: >-
+    #     ./configure --without-x --without-makeinfo --prefix=$HOME && \
+    #     make && \
+    #     make install
+    #   args:
+    #     chdir: ~/emacs-25.1

@@ -92,10 +92,3 @@
         src=/tmp/go1.6.linux-amd64.tar.gz
         dest=/usr/local/
         copy=no
-
-- name: install go tools
-  hosts: all
-  user: liam
-  tasks:
-    - name: run installation script
-      script: 'install-go-tools'
