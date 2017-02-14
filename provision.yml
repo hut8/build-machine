@@ -85,10 +85,10 @@
     - name: download go binary distribution
       get_url: >-
         dest='/tmp'
-        url='https://storage.googleapis.com/golang/go1.6.linux-amd64.tar.gz'
+        url='https://storage.googleapis.com/golang/go1.7.5.linux-amd64.tar.gz'
 
     - name: extract tarball
       unarchive: >-
-        src=/tmp/go1.6.linux-amd64.tar.gz
+        src=/tmp/go1.7.5.linux-amd64.tar.gz
         dest=/usr/local/
         copy=no
