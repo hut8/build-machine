@@ -66,6 +66,7 @@
                   state=present
                   regexp='^AllowAgentForwarding'
                   line='AllowAgentForwarding yes'
+      notify: restart sshd
     - lineinfile: dest=/etc/ssh/ssh_config
                   state=present
                   regexp='^StrictHostKeyChecking'
