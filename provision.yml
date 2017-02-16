@@ -45,6 +45,10 @@
         - wget
         - zsh
 
+    - locale_gen:
+        name: en_US.UTF-8
+        state: present
+
 - name: install rvm
   hosts: all
   user: root
