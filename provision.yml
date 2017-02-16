@@ -85,13 +85,19 @@
   hosts: all
   user: root
   tasks:
+    - name: determine if go is installed
+      stat:
+        path: /usr/local/go/bin/go
+      register: go_stat
     - name: download go binary distribution
-      get_url: >-
-        dest='/tmp'
-        url='https://storage.googleapis.com/golang/go1.7.5.linux-amd64.tar.gz'
+      get_url:
+        dest: '/tmp'
+        url: 'https://storage.googleapis.com/golang/go1.7.5.linux-amd64.tar.gz'
+      when: go_stat.stat.exists == False
 
     - name: extract tarball
-      unarchive: >-
-        src=/tmp/go1.7.5.linux-amd64.tar.gz
-        dest=/usr/local/
-        copy=no
+      unarchive:
+        src: "/tmp/go1.7.5.linux-amd64.tar.gz"
+        dest: "/usr/local/"
+        copy: no
+      when: go_stat.stat.exists == False
