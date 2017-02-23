@@ -10,7 +10,7 @@
         name: "{{ login }}"
         shell: /usr/bin/zsh
         append: yes
-        groups: rvm,sudo
+        groups: sudo
 
     - name: add authorized keys for "{{ login }}"
       authorized_key:
