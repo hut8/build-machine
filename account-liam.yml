@@ -26,14 +26,14 @@
     - name: clone myself
       git:
         dest: ~/build-machine
-        repo: git@github.com:hut8/build-machine
+        repo: https://github.com/hut8/build-machine
         accept_hostkey: True
         update: True
 
     - name: clone prezto
       git:
         dest: ~/.zprezto
-        repo: git@github.com:hut8/prezto
+        repo: https://github.com/hut8/prezto
         accept_hostkey: yes
         update: yes
         recursive: yes
