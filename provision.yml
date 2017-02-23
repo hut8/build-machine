@@ -92,12 +92,12 @@
     - name: download go binary distribution
       get_url:
         dest: '/tmp'
-        url: 'https://storage.googleapis.com/golang/go1.7.5.linux-amd64.tar.gz'
+        url: 'https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz'
       when: go_stat.stat.exists == False
 
     - name: extract tarball
       unarchive:
-        src: "/tmp/go1.7.5.linux-amd64.tar.gz"
+        src: "/tmp/go1.8.linux-amd64.tar.gz"
         dest: "/usr/local/"
         copy: no
       when: go_stat.stat.exists == False
