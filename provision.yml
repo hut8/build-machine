@@ -1,7 +1,9 @@
 ---
 - name: install and update packages
   hosts: all
-  user: root
+  user: ubuntu
+  become: True
+  become_user: root
   tasks:
     - name: update installed packages
       apt: upgrade=dist update_cache=yes
@@ -51,7 +53,9 @@
 
 - name: install rvm
   hosts: all
-  user: root
+  user: ubuntu
+  become: True
+  become_user: root
   roles:
     - role: rvm_io.ruby
       rvm1_rubies:
@@ -60,9 +64,11 @@
 
 - name: configure machine
   hosts: all
-  user: root
+  user: ubuntu
+  become: True
+  become_user: root
   tasks:
-    - authorized_key: user=root key=https://github.com/hut8.keys
+    - authorized_key: user=ubuntu key=https://github.com/hut8.keys
     - lineinfile: dest=/etc/ssh/sshd_config
                   state=present
                   regexp='^AllowAgentForwarding'
@@ -78,13 +84,17 @@
 
 - name: make swapfile
   hosts: all
-  user: root
+  user: ubuntu
+  become: True
+  become_user: root
   roles:
     - { role: kamaln7.swapfile, swapfile_use_dd: True, swapfile_size: 2048 }
 
 - name: install go
   hosts: all
-  user: root
+  user: ubuntu
+  become: True
+  become_user: root
   tasks:
     - name: determine if go is installed
       stat:
