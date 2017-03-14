@@ -1,7 +1,9 @@
 ---
 - name: create user and configure keys
   hosts: all
-  user: root
+  user: ubuntu
+  become: True
+  become_user: root
   vars:
     login: liam
   tasks:
