@@ -1,7 +1,7 @@
 ---
 - name: install and update packages
   hosts: all
-  user: ubuntu
+  # # user: ubuntu
   become: True
   become_user: root
   tasks:
@@ -53,7 +53,7 @@
 
 - name: install rvm
   hosts: all
-  user: ubuntu
+  # user: ubuntu
   become: True
   become_user: root
   roles:
@@ -64,7 +64,7 @@
 
 - name: configure machine
   hosts: all
-  user: ubuntu
+  # user: ubuntu
   become: True
   become_user: root
   tasks:
@@ -84,7 +84,7 @@
 
 - name: make swapfile
   hosts: all
-  user: ubuntu
+  # user: ubuntu
   become: True
   become_user: root
   roles:
@@ -92,7 +92,7 @@
 
 - name: install go
   hosts: all
-  user: ubuntu
+  # user: ubuntu
   become: True
   become_user: root
   tasks:
