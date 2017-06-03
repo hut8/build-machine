@@ -6,12 +6,29 @@
   become_user: root
   tasks:
     - name: update installed packages
-      apt: upgrade=dist update_cache=yes
+      apt:
+        upgrade: dist
+        update_cache: yes
+
+    - name: add apt key for yarn
+      apt_key:
+        url: "https://dl.yarnpkg.com/debian/pubkey.gpg"
+        state: present
+
+    - name: add yarn pkg repo
+      apt_repository:
+        repo: deb https://dl.yarnpkg.com/debian/ stable main
+        state: present
+        filename: yarn
 
     - name: install server base packages
-      apt: name={{ item }} state=latest update_cache=yes
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
       with_items:
         - apt-file
+        - apt-transport-https
         - automake
         - autoconf
         - build-essential
@@ -45,7 +62,9 @@
         - tmux
         - toilet
         - wget
+        - yarn
         - zsh
+
 
     - locale_gen:
         name: en_US.UTF-8
@@ -68,7 +87,9 @@
   become: True
   become_user: root
   tasks:
-    - authorized_key: user=ubuntu key=https://github.com/hut8.keys
+    - authorized_key:
+        user: root
+        key: https://github.com/hut8.keys
     - lineinfile: dest=/etc/ssh/sshd_config
                   state=present
                   regexp='^AllowAgentForwarding'
