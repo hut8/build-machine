@@ -54,6 +54,7 @@
 
     - name: install go tools
       script: 'install-go-tools'
+      ignore_errors: yes
 
     - name: install prelude
       git:
