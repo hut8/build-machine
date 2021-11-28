@@ -3,6 +3,8 @@
 # curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-machine | bash
 set -euo pipefail
 
+repo_url='https://raw.githubusercontent.com/hut8/build-machine/master'
+
 if ! [ $(id -u) = 0 ]; then
     echo 'this script must be run as root'
     exit 1
@@ -71,6 +73,8 @@ if ! user_exists "liam"; then
         --groups docker \
         liam
 fi
+
+"https://raw.githubusercontent.com/hut8/build-machine/master/sudoers"
 
 curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account |
   sudo -u liam /usr/bin/zsh
