@@ -36,6 +36,9 @@ if [[ ! -d "$HOME/.zprezto" ]]; then
     done
 fi
 
+echo 'installing rust'
+curl https://sh.rustup.rs -sSf | sh
+
 # RVM
 if [[ ! -d "$HOME/.rvm" ]]; then
    \curl -sSL https://rvm.io/mpapis.asc | gpg --import -
