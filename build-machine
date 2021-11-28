@@ -1,5 +1,6 @@
 #!/bin/bash
 # Ubuntu 20.04
+# curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account
 set -euo pipefail
 
 if ! [ $(id -u) = 0 ]; then
