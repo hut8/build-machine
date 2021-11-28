@@ -48,13 +48,9 @@ if [[ ! -d "$HOME/.rvm" ]]; then
    \curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
    set +u # uncool, rvm...
    \curl -sSL https://get.rvm.io | bash -s stable
+   source "$HOME/.rvm/scripts/rvm"
    set -u
 fi
-
-set +u
-source "$HOME/.rvm/scripts/rvm"
-rvm install 3.0
-set -u
 
 # NVM
 if [[ ! -f "$HOME/.nvm/nvm.sh" ]]; then
