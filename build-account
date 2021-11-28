@@ -43,6 +43,9 @@ if [[ ! -d "$HOME/.rvm" ]]; then
    \curl -sSL https://get.rvm.io | bash -s stable
 fi
 
+source "$HOME/.rvm/scripts/rvm"
+rvm install 3.0
+
 # NVM
 if [[ ! -f "$HOME/.nvm/nvm.sh" ]]; then
    echo 'installing nvm'
