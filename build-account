@@ -26,7 +26,7 @@ chmod 0600 "$HOME/.ssh/authorized_keys"
 # Prezto
 if [[ ! -d "$HOME/.zprezto" ]]; then
     git clone --recursive \
-        git@github.com:hut8/prezto.git \
+        https://github.com/hut8/prezto.git \
         "${ZDOTDIR:-$HOME}/.zprezto"
 
     for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
