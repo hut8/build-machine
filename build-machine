@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ubuntu 20.04
-# curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account
+# curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-machine | bash
 set -euo pipefail
 
 if ! [ $(id -u) = 0 ]; then
@@ -68,9 +68,9 @@ if ! user_exists "liam"; then
         --user-group \
         --shell /usr/bin/zsh \
         --create-home \
-        --groups docker
-    sudo -u liam mkdir /home/user/.ssh
-    sudo -u liam \
-         curl https://github.com/hut8.keys > /home/user/.ssh/authorized_keys
-    sudo -u liam chmod 0600 /home/user/.ssh/authorized_keys
+        --groups docker \
+        liam
 fi
+
+curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account |
+  sudo -u liam /usr/bin/zsh
