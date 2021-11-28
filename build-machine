@@ -27,6 +27,7 @@ sudo apt install -y \
     htop \
     iotop \
     jq \
+    libpq-dev \
     lsb-release \
     moreutils \
     pcregrep \
