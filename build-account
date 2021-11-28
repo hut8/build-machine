@@ -2,16 +2,21 @@
 set -euo pipefail
 setopt EXTENDED_GLOB
 
-if [[ "$(id -u -n)" -ne "liam" ]]; then
+if [[ $(id -u -n) != liam ]]; then
     echo 'must be run as liam'
     exit 1
 fi
 
 if [[ ! -d "$HOME/build-machine" ]]; then
     git clone \
-        git@github.com:hut8/build-machine \
+        https://github.com/hut8/build-machine \
         "$HOME/build-machine"
 fi
+
+(
+  cd "$HOME/build-machine"
+  git pull
+)
 
 mkdir -p "$HOME/.ssh"
 curl https://github.com/hut8.keys > 
