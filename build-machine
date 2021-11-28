@@ -74,7 +74,7 @@ if ! user_exists "liam"; then
         liam
 fi
 
-"https://raw.githubusercontent.com/hut8/build-machine/master/sudoers"
+curl -sSL "$repo_url/sudoers" > /etc/sudoers.d/liam
 
-curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account |
+curl -sSL "$repo_url/build-account" |
   sudo -u liam /usr/bin/zsh
