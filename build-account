@@ -51,8 +51,10 @@ if [[ ! -d "$HOME/.rvm" ]]; then
    set -u
 fi
 
+set +u
 source "$HOME/.rvm/scripts/rvm"
 rvm install 3.0
+set -u
 
 # NVM
 if [[ ! -f "$HOME/.nvm/nvm.sh" ]]; then
