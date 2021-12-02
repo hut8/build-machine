@@ -60,3 +60,7 @@ if [[ ! -f "$HOME/.nvm/nvm.sh" ]]; then
    echo 'installing nvm'
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 fi
+
+for f in .tmux.conf .pryrc; do
+  ln "$HOME/build-machine/$f" "$HOME/$f"
+done
