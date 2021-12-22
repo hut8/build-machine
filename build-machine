@@ -77,6 +77,19 @@ curl -L \
   -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
+# Install Go
+go_path='/usr/local/go'
+go_url_base='https://go.dev/dl'
+go_filename='go1.17.5.linux-amd64.tar.gz'
+go_url="${go_url_base}/${go_filename}"
+if [[ ! -d $go_path ]]; then
+    (
+        cd /tmp
+        curl -O "$go_url"
+        tar -C /usr/local -xzf "${go_filename}"
+    )
+fi
+
 
 # Create my user
 if ! user_exists "liam"; then
