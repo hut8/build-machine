@@ -65,3 +65,12 @@ for f in .tmux.conf .pryrc; do
   echo "linking $f"
   ln "$HOME/build-machine/$f" "$HOME/$f"
 done
+
+# emacs
+if [[ -d "$HOME/.emacs.d" ]]; then
+  echo "cloning prelude"
+  git clone git@github.com:hut8/prelude "$HOME/.emacs.d"
+else
+  echo "updating prelude"
+  (cd "$HOME/.emacs.d"; git pull)
+fi
