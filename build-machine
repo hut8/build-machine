@@ -94,7 +94,8 @@ fi
 
 
 # Create my user
-if ! user_exists "liam"; then
+if ! user_exists "liam";
+then
     echo 'creating user'
     useradd \
         --comment 'Liam' \
@@ -103,6 +104,9 @@ if ! user_exists "liam"; then
         --create-home \
         --groups docker \
         liam
+else
+    usermod -a -G docker liam # idempotent; returns 0
+    chsh --shell /usr/bin/zsh liam # also idempotent
 fi
 
 curl -sSL "$repo_url/sudoers" > /etc/sudoers.d/liam
