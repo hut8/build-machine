@@ -112,4 +112,4 @@ fi
 curl -sSL "$repo_url/sudoers" > /etc/sudoers.d/liam
 
 curl -sSL "$repo_url/build-account" |
-  sudo -u liam /usr/bin/zsh
+  sudo --set-home -u liam /usr/bin/zsh
