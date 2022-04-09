@@ -7,6 +7,14 @@ if [[ $(id -u -n) != liam ]]; then
     exit 1
 fi
 
+if [[ $HOME != '/home/liam' ]]; then
+  echo "\$HOME=$HOME"
+  echo "expected /home/liam"
+  exit 1
+fi 
+
+cd "$HOME" # we don't want RVM to popd into /root
+
 if [[ ! -d "$HOME/build-machine" ]]; then
     git clone \
         https://github.com/hut8/build-machine \
@@ -44,15 +52,14 @@ fi
 # RVM
 if [[ ! -d "$HOME/.rvm" ]]; then
   echo 'installing rvm'
-   \curl -sSL https://rvm.io/mpapis.asc | gpg --import -
-   \curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
-   set +u # uncool, rvm...
-   pushd $HOME
-   \curl -sSL https://get.rvm.io | bash -s stable
-   source "$HOME/.rvm/scripts/rvm"
-   rvm install 3.0
-   popd
-   set -u
+  \curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+  \curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
+  set +u # uncool, rvm...
+  cd $HOME
+  \curl -sSL https://get.rvm.io | bash -s stable
+  source "$HOME/.rvm/scripts/rvm"
+  rvm install 3.0
+  set -u
 fi
 
 # NVM
