@@ -11,7 +11,7 @@ if [[ $HOME != '/home/liam' ]]; then
   echo "\$HOME=$HOME"
   echo "expected /home/liam"
   exit 1
-fi 
+fi
 
 cd "$HOME" # we don't want RVM to popd into /root
 
@@ -44,9 +44,11 @@ if [[ ! -d "$HOME/.zprezto" ]]; then
     done
 fi
 
+# Rust
 if [[ ! -d "$HOME/.cargo" ]]; then
   echo 'installing rust'
   curl 'https://sh.rustup.rs' -sSf | sh -s -- -y
+  rustup component add rls rust-src
 fi
 
 # RVM
