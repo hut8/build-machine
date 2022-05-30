@@ -44,6 +44,10 @@ if [[ ! -d "$HOME/.zprezto" ]]; then
     done
 fi
 
+# Go
+go install golang.org/x/tools/gopls@latest
+go install honnef.co/go/tools/cmd/staticcheck@latest
+
 # Rust
 if [[ ! -d "$HOME/.cargo" ]]; then
   echo 'installing rust'
