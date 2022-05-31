@@ -45,6 +45,7 @@ if [[ ! -d "$HOME/.zprezto" ]]; then
 fi
 
 # Go
+PATH="/usr/local/go/bin:$PATH"
 go install golang.org/x/tools/gopls@latest
 go install honnef.co/go/tools/cmd/staticcheck@latest
 
@@ -52,6 +53,7 @@ go install honnef.co/go/tools/cmd/staticcheck@latest
 if [[ ! -d "$HOME/.cargo" ]]; then
   echo 'installing rust'
   curl 'https://sh.rustup.rs' -sSf | sh -s -- -y
+  source $HOME/.cargo/env
   rustup component add rls rust-src
 fi
 
