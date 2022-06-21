@@ -74,7 +74,7 @@ if [[ ! -f "$HOME/.nvm/nvm.sh" ]]; then
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 fi
 
-for f in .tmux.conf .pryrc; do
+for f in .sqliterc .tmux.conf .pryrc; do
   echo "linking $f"
   ln "$HOME/build-machine/$f" "$HOME/$f"
 done
