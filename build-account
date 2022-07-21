@@ -13,6 +13,8 @@ if [[ $HOME != '/home/liam' ]]; then
   exit 1
 fi
 
+git config --global pull.rebase false
+
 cd "$HOME" # we don't want RVM to popd into /root
 
 if [[ ! -d "$HOME/build-machine" ]]; then
