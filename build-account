@@ -46,8 +46,11 @@ fi
 
 # Go
 PATH="/usr/local/go/bin:$PATH"
-go install golang.org/x/tools/gopls@latest
-go install honnef.co/go/tools/cmd/staticcheck@latest
+if type go &> /dev/null;
+then
+    go install golang.org/x/tools/gopls@latest
+    go install honnef.co/go/tools/cmd/staticcheck@latest
+fi
 
 # Rust
 if [[ ! -d "$HOME/.cargo" ]]; then
