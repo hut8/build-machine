@@ -94,3 +94,6 @@ else
   echo "updating prelude"
   (cd "$HOME/.emacs.d"; git pull)
 fi
+
+# sqlite cli
+pip install litecli
