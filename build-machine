@@ -76,7 +76,7 @@ apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 # Install Go
 go_path='/usr/local/go'
 go_url_base='https://go.dev/dl'
-go_filename='go1.18.linux-amd64.tar.gz'
+go_filename='go1.19.linux-amd64.tar.gz'
 go_url="${go_url_base}/${go_filename}"
 if [[ ! -d $go_path ]]; then
     (

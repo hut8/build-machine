@@ -71,7 +71,7 @@ if [[ ! -d "$HOME/.rvm" ]]; then
   cd $HOME
   \curl -sSL https://get.rvm.io | bash -s stable
   source "$HOME/.rvm/scripts/rvm"
-  rvm install 3.0
+  rvm install 3.1
   set -u
 fi
 
