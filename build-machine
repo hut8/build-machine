@@ -38,6 +38,7 @@ sudo apt install -y \
     python3-dev \
     python3-pip \
     python-is-python3 \
+    rmlint \
     rsync \
     silversearcher-ag \
     texinfo \
@@ -48,24 +49,27 @@ sudo apt install -y \
     wget \
     zsh
 
+mkdir -p /etc/apt/keyrings
 
 # Add docker repository and install docker
-mkdir -p /etc/apt/keyrings
-docker_keyring_path='/etc/apt/keyrings/docker.gpg'
-if [ ! -f "$docker_keyring_path" ]; then
-    echo "adding docker keyring to $docker_keyring_path"
-    curl -fsSL https://download.docker.com/linux/debian/gpg |
-        gpg --dearmor -o "$docker_keyring_path"
-fi
+if [[ -n $WITH_DOCKER ]]
+then
+    docker_keyring_path='/etc/apt/keyrings/docker.gpg'
+    if [ ! -f "$docker_keyring_path" ]; then
+        echo "adding docker keyring to $docker_keyring_path"
+        curl -fsSL https://download.docker.com/linux/debian/gpg |
+            gpg --dearmor -o "$docker_keyring_path"
+    fi
 
-docker_source_path='/etc/apt/sources.list.d/docker.list'
-docker_source_url='https://download.docker.com/linux/debian'
-if [ ! -f $docker_source_path ]; then
-    echo \
-        "deb [arch=$(dpkg --print-architecture) signed-by=$docker_keyring_path] $docker_source_url $(lsb_release -cs) stable" > "$docker_source_path"
+    docker_source_path='/etc/apt/sources.list.d/docker.list'
+    docker_source_url='https://download.docker.com/linux/debian'
+    if [ ! -f $docker_source_path ]; then
+        echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=$docker_keyring_path] $docker_source_url $(lsb_release -cs) stable" > "$docker_source_path"
+    fi
+    apt update
+    apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 fi
-apt update
-apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 # docker installs some old version of compose; this is a fix
 # curl -L \
