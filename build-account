@@ -59,7 +59,7 @@ if [[ ! -d "$HOME/.cargo" ]]; then
   echo 'installing rust'
   curl 'https://sh.rustup.rs' -sSf | sh -s -- -y
   source $HOME/.cargo/env
-  rustup component add rls rust-src
+  rustup component add rust-src
 fi
 
 # RVM
@@ -71,7 +71,7 @@ if [[ ! -d "$HOME/.rvm" ]]; then
   cd $HOME
   \curl -sSL https://get.rvm.io | bash -s stable
   source "$HOME/.rvm/scripts/rvm"
-  rvm install 3.1
+  rvm install ruby-3.0
   set -u
 fi
 
@@ -97,3 +97,6 @@ fi
 
 # sqlite cli
 pip install litecli
+
+# bat - the cat replacement
+(( $+commands[bat] )) || cargo install --locked bat
