@@ -1,0 +1,55 @@
+#!/bin/bash
+# Arch / EndeavourOS
+# curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-machine-arch | bash
+set -euo pipefail
+
+repo_url='https://raw.githubusercontent.com/hut8/build-machine/master'
+
+if ! [ $(id -u) = 0 ]; then
+    echo 'this script must be run as root'
+    exit 1
+fi
+
+user_exists(){ id "$1" &>/dev/null; }
+
+pacman -Syu --noconfirm --needed \
+       base-devel \
+       git \
+       emacs \
+       curl \
+       gnupg \
+       htop \
+       jq \
+       openbsd-netcat \
+       pv \
+       rsync \
+       python \
+       python-pip \
+       ripgrep \
+       tmux \
+       tree \
+       wget \
+       zsh \
+       s3fs-fuse \
+       sshfs \
+       go \
+       ttf-hack-nerd
+
+# Create my user
+if ! user_exists "liam";
+then
+    echo 'creating user'
+    useradd \
+        --comment 'Liam' \
+        --user-group \
+        --shell /usr/bin/zsh \
+        --create-home \
+        liam
+else
+    chsh --shell /usr/bin/zsh liam # idempotent
+fi
+
+curl -sSL "$repo_url/sudoers" > /etc/sudoers.d/liam
+
+curl -sSL "$repo_url/build-account" |
+    sudo --set-home -u liam /usr/bin/zsh
