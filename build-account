@@ -14,6 +14,7 @@ if [[ $HOME != '/home/liam' ]]; then
 fi
 
 git config --global pull.rebase false
+git config --global push.autoSetupRemote true
 
 cd "$HOME" # we don't want RVM to popd into /root
 

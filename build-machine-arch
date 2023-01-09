@@ -33,7 +33,8 @@ pacman -Syu --noconfirm --needed \
        s3fs-fuse \
        sshfs \
        go \
-       ttf-hack-nerd
+       ttf-hack-nerd \
+       lsof
 
 # Create my user
 if ! user_exists "liam";
