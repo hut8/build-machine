@@ -1,6 +1,7 @@
 #!/usr/bin/zsh
 set -euo pipefail
 setopt EXTENDED_GLOB
+set -x
 
 if [[ $(id -u -n) != liam ]]; then
     echo 'must be run as liam'
@@ -14,6 +15,8 @@ if [[ $HOME != '/home/liam' ]]; then
 fi
 
 git config --global pull.rebase false
+git config --global user.name "Liam Bowen"
+git config --global user.email "LiamBowen@gmail.com"
 
 cd "$HOME" # we don't want RVM to popd into /root
 
@@ -69,21 +72,24 @@ if [[ ! -d "$HOME/.rvm" ]]; then
   \curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
   set +u # uncool, rvm...
   cd $HOME
-  \curl -sSL https://get.rvm.io | bash -s stable
+  \curl -sSL https://get.rvm.io | bash -s head
   source "$HOME/.rvm/scripts/rvm"
-  rvm install ruby-3.0
+  rvm install ruby-3.1
   set -u
 fi
 
 # NVM
 if [[ ! -f "$HOME/.nvm/nvm.sh" ]]; then
-   echo 'installing nvm'
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  echo 'installing nvm'
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  export NVM_DIR="$HOME/.nvm"
+  \. "$NVM_DIR/nvm.sh"
+  nvm install --lts
 fi
 
 for f in .sqliterc .tmux.conf .pryrc .p10k.zsh ; do
   echo "linking $f"
-  ln "$HOME/build-machine/$f" "$HOME/$f"
+  ln -f "$HOME/build-machine/$f" "$HOME/$f"
 done
 
 # emacs
@@ -95,8 +101,15 @@ else
   (cd "$HOME/.emacs.d"; git pull)
 fi
 
-# sqlite cli
 pip install litecli
+pip install pgcli
+pip install mycli
 
 # bat - the cat replacement
 (( $+commands[bat] )) || cargo install --locked bat
+# just - task runner
+(( $+commands[just] )) || cargo install --locked just
+# wasmpack
+(( $+commands[wasm-pack] )) || (
+  curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+)
