@@ -113,3 +113,5 @@ pip install mycli
 (( $+commands[wasm-pack] )) || (
   curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 )
+# du-dust
+(( $+commands[dust] )) || cargo install du-dust
