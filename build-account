@@ -15,6 +15,7 @@ if [[ $HOME != '/home/liam' ]]; then
 fi
 
 git config --global pull.rebase false
+git config --global --add --bool push.autoSetupRemote true
 git config --global user.name "Liam Bowen"
 git config --global user.email "LiamBowen@gmail.com"
 
