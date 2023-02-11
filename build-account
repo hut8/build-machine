@@ -14,23 +14,22 @@ if [[ $HOME != '/home/liam' ]]; then
   exit 1
 fi
 
+cd "$HOME"
+
 git config --global pull.rebase false
 git config --global --add --bool push.autoSetupRemote true
 git config --global user.name "Liam Bowen"
 git config --global user.email "LiamBowen@gmail.com"
 
-cd "$HOME" # we don't want RVM to popd into /root
-
 if [[ ! -d "$HOME/build-machine" ]]; then
     git clone \
         https://github.com/hut8/build-machine \
         "$HOME/build-machine"
+    git remote set-url origin git@github.com:hut8/build-machine
+else
+  (cd "$HOME/build-machine" && git pull)
 fi
 
-(
-  cd "$HOME/build-machine"
-  git pull
-)
 
 mkdir -p "$HOME/.ssh"
 curl https://github.com/hut8.keys > \
@@ -66,29 +65,35 @@ if [[ ! -d "$HOME/.cargo" ]]; then
   rustup component add rust-src
 fi
 
-# RVM
-if [[ ! -d "$HOME/.rvm" ]]; then
-  echo 'installing rvm'
-  \curl -sSL https://rvm.io/mpapis.asc | gpg --import -
-  \curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
-  set +u # uncool, rvm...
-  cd $HOME
-  \curl -sSL https://get.rvm.io | bash -s head
-  source "$HOME/.rvm/scripts/rvm"
-  rvm install ruby-3.1
-  set -u
-fi
+# ASDF
+(( +commands[asdf] )) || (
+  [[ ! -d "$HOME/.asdf" ]] && \
+    git clone https://github.com/asdf-vm/asdf.git "$HOME/.asdf"
+  source "$HOME/.asdf/asdf.sh"
+  asdf plugin add ruby
+  asdf install ruby latest
+  asdf global ruby latest
+  asdf plugin add nodejs
+  asdf install nodejs latest
+  asdf global nodejs latest
+)
 
-# NVM
-if [[ ! -f "$HOME/.nvm/nvm.sh" ]]; then
-  echo 'installing nvm'
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-  export NVM_DIR="$HOME/.nvm"
-  \. "$NVM_DIR/nvm.sh"
-  nvm install --lts
-fi
+# Starship prompt
+(( $+commands[starship] )) || (
+  echo "installing starship"
+  git clone https://github.com/starship/starship
+  cd starship
+  cargo build --release
+  sudo ln -f 'target/release/starship' '/usr/local/bin/starship'
+)
 
-for f in .sqliterc .tmux.conf .pryrc .p10k.zsh ; do
+# Nushell config
+mkdir -p "$HOME/.config/nushell"
+ln -f "$HOME/build-machine/config.nu" "$HOME/.config/nushell/config.nu"
+ln -f "$HOME/build-machine/starship.nu" "$HOME/.config/nushell/starship.nu"
+
+# Various config files to be hardlinked
+for f in .sqliterc .tmux.conf .pryrc .p10k.zsh .asdfrc ; do
   echo "linking $f"
   ln -f "$HOME/build-machine/$f" "$HOME/$f"
 done
