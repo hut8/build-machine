@@ -91,7 +91,7 @@ fi
 
 # Nushell config
 mkdir -p "$HOME/.config/nushell"
-for f in config.nu env.nu sharship.nu ; do
+for f in config.nu env.nu starship.nu ; do
   echo "linking nushell config: $f"
   ln -f "$HOME/build-machine/$f" "$HOME/.config/nushell/$f"
 done
