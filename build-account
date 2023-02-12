@@ -91,12 +91,14 @@ fi
 
 # Nushell config
 mkdir -p "$HOME/.config/nushell"
-ln -f "$HOME/build-machine/config.nu" "$HOME/.config/nushell/config.nu"
-ln -f "$HOME/build-machine/starship.nu" "$HOME/.config/nushell/starship.nu"
+for f in config.nu env.nu sharship.nu ; do
+  echo "linking nushell config: $f"
+  ln -f "$HOME/build-machine/$f" "$HOME/.config/nushell/$f"
+done
 
 # Various config files to be hardlinked
 for f in .sqliterc .tmux.conf .pryrc .p10k.zsh .asdfrc ; do
-  echo "linking $f"
+  echo "linking dotfile: $f"
   ln -f "$HOME/build-machine/$f" "$HOME/$f"
 done
 
