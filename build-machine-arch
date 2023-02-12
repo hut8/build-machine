@@ -19,6 +19,7 @@ pacman -Syu --noconfirm --needed \
        curl \
        gnupg \
        htop \
+       cmake \
        jq \
        nushell \
        openbsd-netcat \
