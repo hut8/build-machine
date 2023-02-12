@@ -646,5 +646,5 @@ let-env config = {
 }
 
 let-env ASDF_NU_DIR = ($env.HOME | path join '.asdf')
-source ~/asdf/asdf.nu
+source ~/.asdf/asdf.nu
 source ~/.config/nushell/starship.nu
