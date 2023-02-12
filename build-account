@@ -96,6 +96,10 @@ for f in config.nu env.nu starship.nu ; do
   ln -f "$HOME/build-machine/$f" "$HOME/.config/nushell/$f"
 done
 
+# starship config
+echo "linking starship config"
+ln -f "$HOME/build-machine/starship.toml" "$HOME/.config/starship.toml"
+
 # Various config files to be hardlinked
 for f in .sqliterc .tmux.conf .pryrc .p10k.zsh .asdfrc ; do
   echo "linking dotfile: $f"
