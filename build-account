@@ -109,7 +109,8 @@ done
 # emacs
 if [[ ! -d "$HOME/.emacs.d/.git" ]]; then
   echo "cloning prelude"
-  git clone git@github.com:hut8/prelude "$HOME/.emacs.d"
+  git clone https://github.com/hut8/prelude "$HOME/.emacs.d"
+  (cd "$HOME/.emacs.d"; git remote set-url origin git@github.com:hut8/prelude)
 else
   echo "updating prelude"
   (cd "$HOME/.emacs.d"; git pull)
