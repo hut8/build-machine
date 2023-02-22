@@ -25,7 +25,7 @@ if [[ ! -d "$HOME/build-machine" ]]; then
     git clone \
         https://github.com/hut8/build-machine \
         "$HOME/build-machine"
-    git remote set-url origin git@github.com:hut8/build-machine
+    (cd build-machine && git remote set-url origin git@github.com:hut8/build-machine)
 else
   (cd "$HOME/build-machine" && git pull)
 fi
