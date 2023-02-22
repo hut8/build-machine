@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ubuntu 20.04
-# curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-machine | bash
+# curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-machine-debian | bash
 set -euo pipefail
 
 repo_url='https://raw.githubusercontent.com/hut8/build-machine/master'
@@ -10,11 +10,14 @@ if ! [ $(id -u) = 0 ]; then
     exit 1
 fi
 
+export DEBIAN_FRONTEND=noninteractive
+
 user_exists(){ id "$1" &>/dev/null; }
 
 sudo apt update
-sudo apt upgrade -y
+sudo apt upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
 sudo apt install -y \
+    -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
     apt-transport-https \
     autoconf \
     automake \
