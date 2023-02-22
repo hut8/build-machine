@@ -63,4 +63,7 @@ let-env NU_PLUGIN_DIRS = [
 let-env ANDROID_HOME = ($env.HOME | path join 'Android' 'Sdk')
 let-env PATH = ($env.PATH | split row (char esep) | prepend ($env.ANDROID_HOME | path join 'emulator'))
 let-env PATH = ($env.PATH | split row (char esep) | prepend ($env.ANDROID_HOME | path join 'platform-tools'))
+let-env PATH = ($env.PATH | split row (char esep) | prepend ($env.HOME | path join '.local' 'bin'))
 let-env EDITOR = "emacs"
+let-env LANG = "en_US.UTF-8"
+let-env LANGUAGE = "en_US.UTF-8"
