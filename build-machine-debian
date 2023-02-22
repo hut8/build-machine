@@ -22,6 +22,7 @@ sudo apt install -y \
     autoconf \
     automake \
     build-essential \
+    cmake \
     curl \
     dnsutils \
     emacs \
@@ -32,6 +33,7 @@ sudo apt install -y \
     iotop \
     jq \
     libpq-dev \
+    libyaml-dev \
     lsb-release \
     moreutils \
     netcat-openbsd \
