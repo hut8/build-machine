@@ -54,6 +54,22 @@ sudo apt install -y \
     wget \
     zsh
 
+hash google-chrome-stable 2>/dev/null || {
+  (
+    cd /tmp
+    chrome_deb='google-chrome-stable_current_amd64.deb'
+    wget "https://dl.google.com/linux/direct/$chrome_deb"
+    dpkg -i "$chrome_deb"
+  )
+}
+
+[[ -f /swapfile ]] || {
+  dd if=/dev/zero of=/swapfile bs=1024 count=8M
+  chmod 0600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+}
+
 mkdir -p /etc/apt/keyrings
 
 # Add docker repository and install docker
