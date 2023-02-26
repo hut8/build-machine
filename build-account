@@ -55,6 +55,7 @@ if type go &> /dev/null;
 then
     go install golang.org/x/tools/gopls@latest
     go install honnef.co/go/tools/cmd/staticcheck@latest
+    go install github.com/google/gops@latest
 fi
 
 # Rust
@@ -115,6 +116,31 @@ else
   echo "updating prelude"
   (cd "$HOME/.emacs.d"; git pull)
 fi
+
+if [[ ! -d "$HOME/android-studio" ]]
+then
+  android_studio="android-studio-2022.1.1.20-linux.tar.gz"
+  echo "downloading android studio"
+  wget "https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.1.1.20/$android_studio"
+  tar -xvf "$android_studio"
+  rm -f "$android_studio"
+fi
+
+[[ $(fc-list | grep -i hack) ]] || {
+  echo "installing hack nerd font"
+  (
+    hack_zip="Hack.zip"
+    mkdir -p "$HOME/tmp/hack"
+    mkdir -p "$HOME/.fonts"
+    cd "$HOME/tmp/hack"
+    wget "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/$hack_zip"
+    unzip "$hack_zip"
+    mv -v *.ttf "$HOME/.fonts"
+    cd "$HOME"
+    rm -rf "$HOME/tmp/hack"
+    fc-cache -fv
+  )
+}
 
 pip install litecli
 pip install pgcli
