@@ -27,6 +27,7 @@ pacman -Syu --noconfirm --needed \
        rsync \
        python \
        python-pip \
+       recode \
        ripgrep \
        tmux \
        tree \
