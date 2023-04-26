@@ -71,32 +71,31 @@ hash google-chrome-stable 2>/dev/null || {
   swapon /swapfile
 }
 
-mkdir -p /etc/apt/keyrings
+install -m 0755 -d /etc/apt/keyrings
 
 # Add docker repository and install docker
-if [[ -v "${WITH_DOCKER-}" ]]
-then
-    docker_keyring_path='/etc/apt/keyrings/docker.gpg'
-    if [ ! -f "$docker_keyring_path" ]; then
-        echo "adding docker keyring to $docker_keyring_path"
-        curl -fsSL https://download.docker.com/linux/debian/gpg |
-            gpg --dearmor -o "$docker_keyring_path"
-    fi
-
-    docker_source_path='/etc/apt/sources.list.d/docker.list'
-    docker_source_url='https://download.docker.com/linux/debian'
-    if [ ! -f $docker_source_path ]; then
-        echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=$docker_keyring_path] $docker_source_url $(lsb_release -cs) stable" > "$docker_source_path"
-    fi
-    apt update
-    apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+docker_keyring_path='/etc/apt/keyrings/docker.gpg'
+if [ ! -f "$docker_keyring_path" ]; then
+    echo "adding docker keyring to $docker_keyring_path"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+        gpg --dearmor -o "$docker_keyring_path"
+    chmod a+r /etc/apt/keyrings/docker.gpg
 fi
+
+docker_source_path='/etc/apt/sources.list.d/docker.list'
+if [ ! -f $docker_source_path ]; then
+    echo \
+        "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+        "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+        tee "$docker_source_path" > /dev/null
+fi
+apt update
+apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 # Install Go
 go_path='/usr/local/go'
 go_url_base='https://go.dev/dl'
-go_filename='go1.19.linux-amd64.tar.gz'
+go_filename='go1.20.3.linux-amd64.tar.gz'
 go_url="${go_url_base}/${go_filename}"
 if [[ ! -d $go_path ]]; then
     (
