@@ -55,6 +55,10 @@ sudo apt install -y \
     wget \
     zsh
 
+hash rclone 2>/dev/null || {
+    curl https://rclone.org/install.sh | bash
+}
+
 hash google-chrome-stable 2>/dev/null || {
   (
     cd /tmp
