@@ -37,6 +37,7 @@ sudo apt install -y \
     lsb-release \
     moreutils \
     netcat-openbsd \
+    nethogs \
     pcregrep \
     pv \
     python3 \
