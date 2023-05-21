@@ -1,0 +1,63 @@
+#!/bin/sh
+# FreeBSD
+# curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-machine-freebsd | sh
+set -eu
+
+repo_url='https://raw.githubusercontent.com/hut8/build-machine/master'
+
+if ! [ "$(id -u)" = 0 ]; then
+    echo 'this script must be run as root'
+    exit 1
+fi
+
+user_exists() { getent passwd "$1" > /dev/null; }
+
+pkg update
+pkg upgrade --yes
+pkg install --yes \
+    autoconf \
+    automake \
+    bash \
+    cmake \
+    curl \
+    emacs-nox \
+    g++ \
+    git \
+    gnupg \
+    go \
+    htop \
+    jq \
+    ncdu \
+    pv \
+    python3 \
+    recode \
+    ripgrep \
+    rmlint \
+    rsync \
+    tmux \
+    tree \
+    wget \
+    zsh
+
+hash rclone 2>/dev/null || {
+    curl https://rclone.org/install.sh | bash
+}
+
+# Create my user
+if ! user_exists "liam";
+then
+    echo 'creating user'
+    useradd \
+        --comment 'Liam' \
+        --user-group \
+        --shell /usr/bin/zsh \
+        --create-home \
+        liam
+else
+    chsh --shell /usr/bin/zsh liam # idempotent
+fi
+
+curl -sSL "$repo_url/sudoers" > /etc/sudoers.d/liam
+
+curl -sSL "$repo_url/build-account" |
+  sudo --set-home -u liam /usr/bin/zsh
