@@ -24,3 +24,14 @@ then
   tar -xvf "$android_studio"
   rm -f "$android_studio"
 fi
+
+hash google-chrome-stable 2>/dev/null || {
+  (
+    cd /tmp
+    chrome_deb='google-chrome-stable_current_amd64.deb'
+    wget "https://dl.google.com/linux/direct/$chrome_deb"
+    apt install -y \
+        -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
+        "./$chrome_deb"
+  )
+}
