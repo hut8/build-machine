@@ -22,11 +22,13 @@ pkg install --yes \
     curl \
     emacs-nox \
     g++ \
+    gcc \
     git \
     gnupg \
     go \
     htop \
     jq \
+    libyaml \
     ncdu \
     pv \
     python3 \
