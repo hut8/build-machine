@@ -17,6 +17,7 @@ fi
 cd "$HOME"
 
 git config --global pull.rebase false
+git config --global --add push.default current
 git config --global --add --bool push.autoSetupRemote true
 git config --global --add branch.autoSetupMerge simple
 git config --global user.name "Liam Bowen"
