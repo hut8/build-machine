@@ -18,6 +18,7 @@ cd "$HOME"
 
 git config --global pull.rebase false
 git config --global --add --bool push.autoSetupRemote true
+git config --global --add branch.autoSetupMerge simple
 git config --global user.name "Liam Bowen"
 git config --global user.email "LiamBowen@gmail.com"
 
@@ -131,3 +132,6 @@ pip install mycli
 )
 # du-dust
 (( $+commands[dust] )) || cargo install du-dust
+
+# Fly.io
+(( $+commands[fly] )) || (curl -L https://fly.io/install.sh | sh)
