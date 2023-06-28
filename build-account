@@ -119,9 +119,9 @@ else
   (cd "$HOME/.emacs.d"; git pull)
 fi
 
-pip install litecli
-pip install pgcli
-pip install mycli
+pipx install litecli
+pipx install pgcli
+pipx install mycli
 
 # bat - the cat replacement
 (( $+commands[bat] )) || cargo install --locked bat
