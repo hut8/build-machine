@@ -19,7 +19,7 @@ cd "$HOME"
 git config --global pull.rebase false
 git config --global --add push.default current
 git config --global --add --bool push.autoSetupRemote true
-git config --global --add branch.autoSetupMerge simple
+git config --global branch.autoSetupMerge true
 git config --global user.name "Liam Bowen"
 git config --global user.email "LiamBowen@gmail.com"
 
@@ -119,9 +119,9 @@ else
   (cd "$HOME/.emacs.d"; git pull)
 fi
 
-pip install litecli
-pip install pgcli
-pip install mycli
+pipx install litecli
+pipx install pgcli
+pipx install mycli
 
 # bat - the cat replacement
 (( $+commands[bat] )) || cargo install --locked bat
