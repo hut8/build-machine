@@ -68,19 +68,13 @@ if [[ ! -d "$HOME/.cargo" ]]; then
   rustup component add rust-src
 fi
 
-# ASDF
-(( +commands[asdf] )) || (
-  [[ ! -d "$HOME/.asdf" ]] && \
-    git clone https://github.com/asdf-vm/asdf.git "$HOME/.asdf"
-  set +u
-  source "$HOME/.asdf/asdf.sh"
-  set -u
-  asdf plugin add ruby || true
-  asdf install ruby latest || true
-  asdf global ruby latest || true
-  asdf plugin add nodejs || true
-  asdf install nodejs latest || true
-  asdf global nodejs latest || true
+# RTX
+mkdir -p "$HOME/.config/rtx"
+ln "$HOME/build-machine/rtx.toml" "$HOME/.config/rtx/config.toml"
+(( +commands[rtx] )) || (
+  cargo install rtx-cli
+  rehash
+  rtx install
 )
 
 # Starship prompt
@@ -128,9 +122,9 @@ pipx install mycli
 # just - task runner
 (( $+commands[just] )) || cargo install --locked just
 # wasmpack
-(( $+commands[wasm-pack] )) || (
-  curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-)
+# (( $+commands[wasm-pack] )) || (
+#   curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+# )
 # du-dust
 (( $+commands[dust] )) || cargo install du-dust
 
