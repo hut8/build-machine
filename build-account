@@ -22,6 +22,7 @@ git config --global --add --bool push.autoSetupRemote true
 git config --global branch.autoSetupMerge true
 git config --global user.name "Liam Bowen"
 git config --global user.email "LiamBowen@gmail.com"
+git config --global init.defaultBranch main
 
 if [[ ! -d "$HOME/build-machine" ]]; then
     git clone \
