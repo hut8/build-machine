@@ -36,6 +36,7 @@ sudo apt-get install -y \
     libyaml-dev \
     lsb-release \
     moreutils \
+    ncdu \
     netcat-openbsd \
     nethogs \
     pcregrep \
@@ -87,21 +88,26 @@ if [ ! -f $docker_source_path ]; then
         "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
         tee "$docker_source_path" > /dev/null
 fi
-apt update
-apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 # MongoDB Community Edition
 # Adds repo and key but does not install
 curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
     sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg \
          --dearmor
-echo "deb [signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/6.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-apt update
+echo "deb [signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/6.0 main" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+apt-get update
+
+# Gcloud
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.asc
+apt-get update && apt-get install google-cloud-cli google-cloud-cli-cloud-run-proxy google-cloud-cli-cloud-build-local
 
 # Install Go
 go_path='/usr/local/go'
 go_url_base='https://go.dev/dl'
-go_filename='go1.20.3.linux-amd64.tar.gz'
+go_filename='go1.20.6.linux-amd64.tar.gz'
 go_url="${go_url_base}/${go_filename}"
 if [[ ! -d $go_path ]]; then
     (
