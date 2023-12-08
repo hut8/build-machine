@@ -105,12 +105,18 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyr
 apt-get update && apt-get install google-cloud-cli google-cloud-cli-cloud-run-proxy google-cloud-cli-cloud-build-local
 
 # Install Go
+arch=$(uname -m)
+os=$(uname -s | tr '[:upper:]' '[:lower:]')
+archive=$(curl -sSL 'https://go.dev/dl/?mode=json' |
+    jq -r '.[0].files[] | select(.os == "'$os'") | select(.arch == "'$arch'") | select(.kind == "archive")')
+version="go$(echo "$archive" | jq -r '.version')"
+go_filename=$(echo "$archive" | jq -r '.filename')
 go_path='/usr/local/go'
 go_url_base='https://go.dev/dl'
-go_filename='go1.20.6.linux-amd64.tar.gz'
 go_url="${go_url_base}/${go_filename}"
 if [[ ! -d $go_path ]]; then
     (
+        echo "go: latest version: $version for $os/$arch"
         echo "downloading go from $go_url to $go_path"
         cd /tmp
         curl --location --remote-name --silent --show-error "$go_url"
