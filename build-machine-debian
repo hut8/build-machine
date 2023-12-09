@@ -105,7 +105,7 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyr
 apt-get update && apt-get install google-cloud-cli google-cloud-cli-cloud-run-proxy google-cloud-cli-cloud-build-local
 
 # Install Go
-arch=$(uname -m)
+arch=$(uname -m | sed -e 's/x86_64/amd64/g')
 os=$(uname -s | tr '[:upper:]' '[:lower:]')
 archive=$(curl -sSL 'https://go.dev/dl/?mode=json' |
     jq -r '.[0].files[] | select(.os == "'$os'") | select(.arch == "'$arch'") | select(.kind == "archive")')
