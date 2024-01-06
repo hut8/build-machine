@@ -71,7 +71,7 @@ fi
 
 # RTX
 mkdir -p "$HOME/.config/rtx"
-ln "$HOME/build-machine/rtx.toml" "$HOME/.config/rtx/config.toml"
+ln -f "$HOME/build-machine/rtx.toml" "$HOME/.config/rtx/config.toml"
 (( +commands[rtx] )) || (
   cargo install rtx-cli
   rehash
