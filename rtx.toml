@@ -3,4 +3,4 @@
 # you can set these with `rtx use -g`
 node = 'lts'
 python = ['3.10']
-ruby = ''
+ruby = '3.3.0'
