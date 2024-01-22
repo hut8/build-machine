@@ -99,7 +99,7 @@ echo "linking starship config"
 ln -f "$HOME/build-machine/starship.toml" "$HOME/.config/starship.toml"
 
 # Various config files to be hardlinked
-for f in .sqliterc .tmux.conf .pryrc .p10k.zsh .asdfrc ; do
+for f in .sqliterc .tmux.conf .pryrc .p10k.zsh  ; do
   echo "linking dotfile: $f"
   ln -f "$HOME/build-machine/$f" "$HOME/$f"
 done
