@@ -72,7 +72,7 @@ fi
 # Mise
 mkdir -p "$HOME/.config/mise"
 ln -f "$HOME/build-machine/mise.toml" "$HOME/.config/mise/config.toml"
-(( +commands[mise] )) || (
+(( $+commands[mise] )) || (
   cargo install mise
   rehash
   mise install
