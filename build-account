@@ -69,10 +69,10 @@ if [[ ! -d "$HOME/.cargo" ]]; then
   rustup component add rust-src
 fi
 
-# RTX
+# Mise
 mkdir -p "$HOME/.config/mise"
 ln -f "$HOME/build-machine/mise.toml" "$HOME/.config/mise/config.toml"
-(( +commands[rtx] )) || (
+(( +commands[mise] )) || (
   cargo install mise
   rehash
   mise install
