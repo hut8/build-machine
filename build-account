@@ -70,33 +70,33 @@ if [[ ! -d "$HOME/.cargo" ]]; then
 fi
 
 # RTX
-mkdir -p "$HOME/.config/rtx"
-ln -f "$HOME/build-machine/rtx.toml" "$HOME/.config/rtx/config.toml"
+mkdir -p "$HOME/.config/mise"
+ln -f "$HOME/build-machine/mise.toml" "$HOME/.config/mise/config.toml"
 (( +commands[rtx] )) || (
-  cargo install rtx-cli
+  cargo install mise
   rehash
-  rtx install
+  mise install
 )
 
 # Starship prompt
-(( $+commands[starship] )) || (
-  echo "installing starship"
-  [[ -d "$HOME/starship" ]] || git clone https://github.com/starship/starship
-  cd "$HOME/starship"
-  cargo build --release
-  sudo ln -f 'target/release/starship' '/usr/local/bin/starship'
-)
+# (( $+commands[starship] )) || (
+#   echo "installing starship"
+#   [[ -d "$HOME/starship" ]] || git clone https://github.com/starship/starship
+#   cd "$HOME/starship"
+#   cargo build --release
+#   sudo ln -f 'target/release/starship' '/usr/local/bin/starship'
+# )
 
 # Nushell config
 mkdir -p "$HOME/.config/nushell"
-for f in config.nu env.nu starship.nu ; do
+for f in config.nu env.nu ; do
   echo "linking nushell config: $f"
   ln -f "$HOME/build-machine/$f" "$HOME/.config/nushell/$f"
 done
 
 # starship config
-echo "linking starship config"
-ln -f "$HOME/build-machine/starship.toml" "$HOME/.config/starship.toml"
+#echo "linking starship config"
+#ln -f "$HOME/build-machine/starship.toml" "$HOME/.config/starship.toml"
 
 # Various config files to be hardlinked
 for f in .sqliterc .tmux.conf .pryrc .p10k.zsh  ; do
