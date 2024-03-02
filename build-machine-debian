@@ -70,8 +70,11 @@ hash rclone 2>/dev/null || {
   swapon /swapfile
 }
 
+
+trusted_keyrings='/etc/apt/trusted.gpg.d'
+
 # Add docker repository and install docker
-docker_keyring_path='/etc/apt/trusted.gpg.d/docker.asc'
+docker_keyring_path="$trusted_keyrings/docker.asc"
 if [ ! -f "$docker_keyring_path" ]; then
     echo "adding docker keyring to $docker_keyring_path"
     curl -fsSL https://download.docker.com/linux/debian/gpg > "$docker_keyring_path"
@@ -91,15 +94,23 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 # MongoDB Community Edition
 # Adds repo and key but does not install
 curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
-    sudo gpg -o /etc/apt/trusted.gpg.d/mongodb-server-6.0.gpg \
+    sudo gpg -o $trusted_keyrings/mongodb-server-6.0.gpg \
          --dearmor
-echo "deb [signed-by=/etc/apt/trusted.gpg.d/mongodb-server-6.0.gpg] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/6.0 main" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+echo "deb [signed-by=$trusted_keyrings/mongodb-server-6.0.gpg] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/6.0 main" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list
 apt-get update
 
 # Gcloud
-echo "deb [signed-by=/etc/apt/trusted.gpg.d/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /etc/apt/trusted.gpg.d/cloud.google.asc
+echo "deb [signed-by=$trusted_keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee "$trusted_keyrings/cloud.google.asc"
 apt-get update && apt-get install google-cloud-cli google-cloud-cli-cloud-run-proxy google-cloud-cli-cloud-build-local
+
+# Postgres repo
+echo "deb [signed-by=$trusted_keyrings/apt.postgresql.org.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
+curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o "$trusted_keyrings/apt.postgresql.org.gpg"
+
+# Caddy repo
+curl 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o "$trusted_keyrings/caddy-stable-archive-keyring.gpg"
+echo "deb [signed-by=$trusted_keyrings/caddy-stable-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | tee /etc/apt/sources.list.d/caddy-stable.list
 
 # Install Go
 arch=$(uname -m | sed -e 's/x86_64/amd64/g' -e 's/aarch64/arm64/g')
