@@ -91,14 +91,14 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 # MongoDB Community Edition
 # Adds repo and key but does not install
 curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
-    sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg \
+    sudo gpg -o /etc/apt/trusted.gpg.d/mongodb-server-6.0.gpg \
          --dearmor
-echo "deb [signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/6.0 main" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/mongodb-server-6.0.gpg] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/6.0 main" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list
 apt-get update
 
 # Gcloud
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.asc
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /etc/apt/trusted.gpg.d/cloud.google.asc
 apt-get update && apt-get install google-cloud-cli google-cloud-cli-cloud-run-proxy google-cloud-cli-cloud-build-local
 
 # Install Go
