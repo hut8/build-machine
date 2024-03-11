@@ -1,2 +1,0 @@
-rvm_io.rvm1-ruby
-kamaln7.swapfile
