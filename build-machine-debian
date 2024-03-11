@@ -32,6 +32,7 @@ sudo apt-get install -y \
     htop \
     iotop \
     jq \
+    libffi-dev \
     libpq-dev \
     libyaml-dev \
     lsb-release \
@@ -41,6 +42,7 @@ sudo apt-get install -y \
     nethogs \
     pcregrep \
     pipx \
+    pkg-config \
     pv \
     python3 \
     python3-dev \
