@@ -32,8 +32,14 @@ sudo apt-get install -y \
     htop \
     iotop \
     jq \
+    libbz2-dev \
     libffi-dev \
+    liblzma-dev \
+    libncurses5 \
+    libncurses5-dev \
     libpq-dev \
+    libreadline-dev \
+    libsqlite3-dev \
     libyaml-dev \
     lsb-release \
     moreutils \
@@ -75,23 +81,23 @@ hash rclone 2>/dev/null || {
 
 trusted_keyrings='/etc/apt/trusted.gpg.d'
 
-# Add docker repository and install docker
-docker_keyring_path="$trusted_keyrings/docker.asc"
-if [ ! -f "$docker_keyring_path" ]; then
-    echo "adding docker keyring to $docker_keyring_path"
-    curl -fsSL https://download.docker.com/linux/debian/gpg > "$docker_keyring_path"
-    chmod a+r "$docker_keyring_path"
-fi
+# # Add docker repository and install docker
+# docker_keyring_path="$trusted_keyrings/docker.asc"
+# if [ ! -f "$docker_keyring_path" ]; then
+#     echo "adding docker keyring to $docker_keyring_path"
+#     curl -fsSL https://download.docker.com/linux/debian/gpg > "$docker_keyring_path"
+#     chmod a+r "$docker_keyring_path"
+# fi
 
-docker_source_path='/etc/apt/sources.list.d/docker.list'
-if [ ! -f $docker_source_path ]; then
-    echo \
-        "deb [arch="$(dpkg --print-architecture)" signed-by=$docker_keyring_path] https://download.docker.com/linux/debian \
-        "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-        tee "$docker_source_path" > /dev/null
-fi
-apt-get update
-apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# docker_source_path='/etc/apt/sources.list.d/docker.list'
+# if [ ! -f $docker_source_path ]; then
+#     echo \
+#         "deb [arch="$(dpkg --print-architecture)" signed-by=$docker_keyring_path] https://download.docker.com/linux/debian \
+#         "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+#         tee "$docker_source_path" > /dev/null
+# fi
+# apt-get update
+# apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # MongoDB Community Edition
 # Adds repo and key but does not install
