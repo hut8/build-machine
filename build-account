@@ -39,6 +39,13 @@ curl https://github.com/hut8.keys > \
   "$HOME/.ssh/authorized_keys"
 chmod 0600 "$HOME/.ssh/authorized_keys"
 
+# Fix SSH Agent Forwarding in tmux
+if [[ ! -f "$HOME/.ssh/rc" ]]; then
+  echo 'Fixing SSH Agent Forwarding in tmux'
+  ln -f "$HOME/build-machine/sshrc" "$HOME/.ssh/rc"
+  chmod +x "$HOME/.ssh/rc"
+fi
+
 # Prezto
 if [[ ! -d "$HOME/.zprezto" ]]; then
   echo 'installing prezto'
