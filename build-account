@@ -3,15 +3,9 @@ set -euo pipefail
 setopt EXTENDED_GLOB
 set -x
 
-if [[ $(id -u -n) != liam ]]; then
-    echo 'must be run as liam'
+if [[ $(id -u) = 0 ]]; then
+    echo 'do not run this as root!'
     exit 1
-fi
-
-if [[ $HOME != '/home/liam' ]]; then
-  echo "\$HOME=$HOME"
-  echo "expected /home/liam"
-  exit 1
 fi
 
 cd "$HOME"
@@ -21,7 +15,7 @@ git config --global --add push.default current
 git config --global --add --bool push.autoSetupRemote true
 git config --global branch.autoSetupMerge true
 git config --global user.name "Liam Bowen"
-git config --global user.email "LiamBowen@gmail.com"
+git config --global user.email "liam@supervillains.io"
 git config --global init.defaultBranch main
 
 if [[ ! -d "$HOME/build-machine" ]]; then
@@ -123,18 +117,13 @@ fi
 
 pipx install litecli
 pipx install pgcli
-pipx install mycli
+command -v mysql >/dev/null 2>&1 && pipx install mycli
 
 # bat - the cat replacement
 (( $+commands[bat] )) || cargo install --locked bat
 # just - task runner
 (( $+commands[just] )) || cargo install --locked just
-# wasmpack
-# (( $+commands[wasm-pack] )) || (
-#   curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-# )
 # du-dust
 (( $+commands[dust] )) || cargo install du-dust
-
 # Fly.io
 (( $+commands[fly] )) || (curl -L https://fly.io/install.sh | sh)
