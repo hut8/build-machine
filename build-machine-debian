@@ -35,8 +35,7 @@ sudo apt-get install -y \
     libbz2-dev \
     libffi-dev \
     liblzma-dev \
-    libncurses5 \
-    libncurses5-dev \
+    libncurses-dev \
     libpq-dev \
     libreadline-dev \
     libsqlite3-dev \
