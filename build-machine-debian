@@ -45,7 +45,6 @@ apt-get install -yq \
     ncdu \
     netcat-openbsd \
     nethogs \
-    pcregrep \
     pipx \
     pkg-config \
     pv \
