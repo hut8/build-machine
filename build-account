@@ -1,4 +1,6 @@
 #!/usr/bin/zsh
+# curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account | zsh
+
 set -euo pipefail
 setopt EXTENDED_GLOB
 set -x
@@ -127,3 +129,8 @@ command -v mysql >/dev/null 2>&1 && pipx install mycli
 (( $+commands[dust] )) || cargo install du-dust
 # Fly.io
 (( $+commands[fly] )) || (curl -L https://fly.io/install.sh | sh)
+
+# Claude Code config
+mkdir -p "$HOME/.claude"
+ln -f "$HOME/build-machine/claude-settings.json" "$HOME/.claude/settings.json"
+ln -f "$HOME/build-machine/statusline" "$HOME/.claude/statusline"

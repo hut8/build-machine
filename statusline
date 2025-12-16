@@ -1,0 +1,105 @@
+#!/bin/bash
+
+# Read Claude Code session data from stdin
+input=$(cat)
+
+# Extract basic info matching bash PS1 format
+username="$(whoami)"
+hostname="$(hostname -s)"
+current_dir="$(pwd)"
+
+# Get git status information (mimicking p10k's my_git_formatter)
+git_info=""
+if git rev-parse --is-inside-work-tree &>/dev/null 2>&1; then
+    branch=$(git branch --show-current 2>/dev/null)
+
+    # Check if we're in a worktree (not the main repo)
+    git_dir=$(git rev-parse --git-dir 2>/dev/null)
+    worktree_name=""
+    if [[ "$git_dir" == *".git/worktrees/"* ]]; then
+        worktree_name=$(basename "$(git rev-parse --show-toplevel)")
+        git_info=" [wt:$worktree_name]"
+    fi
+
+    if [ -n "$branch" ]; then
+        # Truncate long branch names (like p10k does)
+        if [ ${#branch} -gt 32 ]; then
+            branch="${branch:0:12}…${branch: -12}"
+        fi
+        git_info="$git_info ($branch"
+
+        # Get remote tracking branch
+        remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+        if [ -n "$remote_branch" ] && [ "$remote_branch" != "$branch" ]; then
+            # Strip remote name for cleaner display
+            remote_short="${remote_branch#*/}"
+            if [ "$remote_short" != "$branch" ]; then
+                git_info="$git_info:$remote_short"
+            fi
+        fi
+
+        # Check for WIP commits
+        commit_msg=$(git log -1 --pretty=%s 2>/dev/null)
+        if [[ "$commit_msg" =~ (^|[^[:alnum:]])(wip|WIP)([^[:alnum:]]|$) ]]; then
+            git_info="$git_info wip"
+        fi
+
+        # Colors for git status indicators
+        COLOR_RESET='\033[00m'
+        COLOR_RED='\033[31m'
+        COLOR_GREEN='\033[32m'
+        COLOR_YELLOW='\033[33m'
+        COLOR_CYAN='\033[36m'
+        COLOR_MAGENTA='\033[35m'
+
+        # Commits behind/ahead of remote
+        if [ -n "$remote_branch" ]; then
+            commits_behind=$(git rev-list --count HEAD.."$remote_branch" 2>/dev/null | tr -d ' ')
+            commits_ahead=$(git rev-list --count "$remote_branch"..HEAD 2>/dev/null | tr -d ' ')
+            [ "$commits_behind" -gt 0 ] 2>/dev/null && git_info="$git_info ${COLOR_RED}⇣$commits_behind${COLOR_RESET}"
+            [ "$commits_ahead" -gt 0 ] 2>/dev/null && git_info="$git_info ${COLOR_GREEN}⇡$commits_ahead${COLOR_RESET}"
+        fi
+
+        # Stashes
+        stashes=$(git stash list 2>/dev/null | wc -l | tr -d ' ')
+        [ "$stashes" -gt 0 ] 2>/dev/null && git_info="$git_info ${COLOR_MAGENTA}*$stashes${COLOR_RESET}"
+
+        # Git state (merge, rebase, etc.)
+        if [ -d "$(git rev-parse --git-dir)/rebase-merge" ] || [ -d "$(git rev-parse --git-dir)/rebase-apply" ]; then
+            git_info="$git_info ${COLOR_MAGENTA}rebase${COLOR_RESET}"
+        elif [ -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
+            git_info="$git_info ${COLOR_MAGENTA}merge${COLOR_RESET}"
+        elif [ -f "$(git rev-parse --git-dir)/CHERRY_PICK_HEAD" ]; then
+            git_info="$git_info ${COLOR_MAGENTA}cherry-pick${COLOR_RESET}"
+        elif [ -f "$(git rev-parse --git-dir)/REVERT_HEAD" ]; then
+            git_info="$git_info ${COLOR_MAGENTA}revert${COLOR_RESET}"
+        elif [ -f "$(git rev-parse --git-dir)/BISECT_LOG" ]; then
+            git_info="$git_info ${COLOR_MAGENTA}bisect${COLOR_RESET}"
+        fi
+
+        # Conflicts
+        conflicts=$(git diff --name-only --diff-filter=U 2>/dev/null | wc -l | tr -d ' ')
+        [ "$conflicts" -gt 0 ] 2>/dev/null && git_info="$git_info ${COLOR_RED}~$conflicts${COLOR_RESET}"
+
+        # Staged changes
+        staged=$(git diff --cached --numstat 2>/dev/null | wc -l | tr -d ' ')
+        [ "$staged" -gt 0 ] 2>/dev/null && git_info="$git_info ${COLOR_GREEN}+$staged${COLOR_RESET}"
+
+        # Unstaged changes (modified)
+        unstaged=$(git diff --numstat 2>/dev/null | wc -l | tr -d ' ')
+        [ "$unstaged" -gt 0 ] 2>/dev/null && git_info="$git_info ${COLOR_YELLOW}!$unstaged${COLOR_RESET}"
+
+        # Untracked files
+        untracked=$(git ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
+        [ "$untracked" -gt 0 ] 2>/dev/null && git_info="$git_info ${COLOR_CYAN}?$untracked${COLOR_RESET}"
+
+        git_info="$git_info)"
+    fi
+fi
+
+# Display status line matching bash PS1: user@host:directory [wt:worktree] (branch status)
+# Colors: green for user@host (01;32m), blue for directory (01;34m)
+# Format matches: PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+# Note: Trailing $ removed as per status line guidelines
+# Use %b for git_info to interpret embedded escape sequences for colors
+printf '\033[01;32m%s@%s\033[00m:\033[01;34m%s\033[00m%b' "$username" "$hostname" "$current_dir" "$git_info"
