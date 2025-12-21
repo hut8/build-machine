@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+BOLD='\033[1m'
+
+set -e  # Exit on error
+
+# Check if branch name is provided
+if [ -z "$1" ]; then
+    echo -e "${RED}Error: Branch name is required${NC}"
+    echo -e "${YELLOW}Usage: make-worktree <branch-name>${NC}"
+    echo -e "${YELLOW}Example: make-worktree feat/new-feature${NC}"
+    exit 1
+fi
+
+BRANCH_NAME="$1"
+
+# Detect project name from current directory
+CURRENT_DIR="$(pwd)"
+PROJECT_NAME="$(basename "$CURRENT_DIR")"
+
+# Ensure we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo -e "${RED}Error: Not in a git repository${NC}"
+    exit 1
+fi
+
+# Detect default branch (main or master)
+DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+if ! git rev-parse --verify "$DEFAULT_BRANCH" >/dev/null 2>&1; then
+    # Fallback: try to detect default branch from remote
+    if git rev-parse --verify main >/dev/null 2>&1; then
+        DEFAULT_BRANCH="main"
+    elif git rev-parse --verify master >/dev/null 2>&1; then
+        DEFAULT_BRANCH="master"
+    else
+        echo -e "${RED}Error: Could not determine default branch${NC}"
+        exit 1
+    fi
+fi
+
+WORKTREE_DIR="$HOME/worktrees/$PROJECT_NAME/$BRANCH_NAME"
+
+echo -e "${BOLD}${CYAN}Creating worktree for branch: ${MAGENTA}$BRANCH_NAME${NC}"
+echo -e "${CYAN}Project: ${NC}$PROJECT_NAME"
+echo -e "${CYAN}Location: ${NC}$WORKTREE_DIR"
+echo -e "${CYAN}Base branch: ${NC}$DEFAULT_BRANCH"
+echo ""
+
+# Create the worktree
+echo -e "${BLUE}[1/1]${NC} ${BOLD}Creating git worktree...${NC}"
+mkdir -p "$(dirname "$WORKTREE_DIR")"
+git worktree add -b "$BRANCH_NAME" "$WORKTREE_DIR" "$DEFAULT_BRANCH"
+echo -e "${GREEN}✓ Worktree created${NC}"
+echo ""
+
+echo -e "${GREEN}${BOLD}✓ Worktree setup complete!${NC}"
+echo ""
+
+# Change to the worktree directory
+cd "$WORKTREE_DIR"
+
+# Run mise trust if mise is installed
+if command -v mise &> /dev/null; then
+    echo -e "${BLUE}Running mise trust...${NC}"
+    mise trust 2>/dev/null || true
+    echo -e "${GREEN}✓ mise trust complete${NC}"
+fi
+
+# Set tmux window title if in tmux
+if [ -n "$TMUX" ]; then
+    tmux rename-window "$BRANCH_NAME" 2>/dev/null || true
+    echo -e "${GREEN}✓ tmux window renamed to: ${MAGENTA}$BRANCH_NAME${NC}"
+fi
+
+echo ""
+echo -e "${BOLD}${CYAN}Launching Claude Code...${NC}"
+echo ""
+
+# Launch Claude Code in the worktree directory
+if command -v claude &> /dev/null; then
+    claude
+else
+    echo -e "${YELLOW}Warning: 'claude' command not found${NC}"
+    echo -e "${CYAN}Worktree is ready at: $(pwd)${NC}"
+fi

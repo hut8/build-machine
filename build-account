@@ -134,3 +134,8 @@ command -v mysql >/dev/null 2>&1 && pipx install mycli
 mkdir -p "$HOME/.claude"
 ln -f "$HOME/build-machine/claude-settings.json" "$HOME/.claude/settings.json"
 ln -f "$HOME/build-machine/statusline" "$HOME/.claude/statusline"
+
+# Install make-worktree script
+mkdir -p "$HOME/.local/bin"
+ln -f "$HOME/build-machine/make-worktree" "$HOME/.local/bin/make-worktree"
+chmod +x "$HOME/.local/bin/make-worktree"
