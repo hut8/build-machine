@@ -55,17 +55,173 @@ echo -e "${CYAN}Base branch: ${NC}$DEFAULT_BRANCH"
 echo ""
 
 # Create the worktree
-echo -e "${BLUE}[1/1]${NC} ${BOLD}Creating git worktree...${NC}"
+echo -e "${BLUE}[1/3]${NC} ${BOLD}Creating git worktree...${NC}"
 mkdir -p "$(dirname "$WORKTREE_DIR")"
 git worktree add -b "$BRANCH_NAME" "$WORKTREE_DIR" "$DEFAULT_BRANCH"
 echo -e "${GREEN}✓ Worktree created${NC}"
 echo ""
 
-echo -e "${GREEN}${BOLD}✓ Worktree setup complete!${NC}"
+# Copy gitignored files
+echo -e "${BLUE}[2/3]${NC} ${BOLD}Copying gitignored configuration files...${NC}"
+cd "$CURRENT_DIR"
+
+# Find common gitignored config files in the source directory
+GITIGNORED_FILES=()
+SEARCH_PATTERNS=(
+    ".env"
+    ".env.*"
+    "*.local"
+    "config.local.*"
+    ".env.local"
+    ".env.development"
+    ".env.production"
+)
+
+# Build a list of files to check
+FILES_TO_CHECK=()
+for pattern in "${SEARCH_PATTERNS[@]}"; do
+    while IFS= read -r file; do
+        FILES_TO_CHECK+=("$file")
+    done < <(find . -name "$pattern" -type f -not -path "*/.git/*" -not -path "*/node_modules/*" -not -path "*/target/*" 2>/dev/null)
+done
+
+# Check which files are actually gitignored
+COPIED_COUNT=0
+for file in "${FILES_TO_CHECK[@]}"; do
+    if git check-ignore -q "$file" 2>/dev/null; then
+        # File is gitignored, copy it
+        rel_path="${file#./}"
+        dest_file="$WORKTREE_DIR/$rel_path"
+        dest_dir="$(dirname "$dest_file")"
+
+        mkdir -p "$dest_dir"
+        cp "$file" "$dest_file"
+        echo -e "${CYAN}  • Copied: ${NC}$rel_path"
+        COPIED_COUNT=$((COPIED_COUNT + 1))
+        GITIGNORED_FILES+=("$rel_path")
+    fi
+done
+
+if [ $COPIED_COUNT -eq 0 ]; then
+    echo -e "${YELLOW}  • No gitignored config files found${NC}"
+else
+    echo -e "${GREEN}✓ Copied $COPIED_COUNT gitignored file(s)${NC}"
+fi
 echo ""
 
 # Change to the worktree directory
 cd "$WORKTREE_DIR"
+
+# Detect and install dependencies
+echo -e "${BLUE}[3/3]${NC} ${BOLD}Detecting dependency managers...${NC}"
+BACKGROUND_JOBS=()
+mkdir -p "$WORKTREE_DIR/.logs"
+
+# Detect JavaScript package managers
+JS_PACKAGE_DIRS=()
+while IFS= read -r -d '' package_json; do
+    package_dir="$(dirname "$package_json")"
+    JS_PACKAGE_DIRS+=("$package_dir")
+done < <(find "$WORKTREE_DIR" -name "package.json" -not -path "*/node_modules/*" -print0 2>/dev/null)
+
+if [ ${#JS_PACKAGE_DIRS[@]} -gt 0 ]; then
+    for package_dir in "${JS_PACKAGE_DIRS[@]}"; do
+        rel_path="${package_dir#$WORKTREE_DIR/}"
+        [ "$rel_path" = "$WORKTREE_DIR" ] && rel_path="."
+
+        # Detect which package manager to use
+        if [ -f "$package_dir/pnpm-lock.yaml" ]; then
+            PKG_MGR="pnpm"
+            PKG_CMD="pnpm install"
+        elif [ -f "$package_dir/yarn.lock" ]; then
+            PKG_MGR="yarn"
+            PKG_CMD="yarn install"
+        elif [ -f "$package_dir/bun.lockb" ]; then
+            PKG_MGR="bun"
+            PKG_CMD="bun install"
+        else
+            PKG_MGR="npm"
+            PKG_CMD="npm install"
+        fi
+
+        echo -e "${CYAN}  • Found package.json in ${rel_path} (using ${PKG_MGR})${NC}"
+
+        # Run package manager in background
+        (
+            cd "$package_dir"
+            $PKG_CMD &>"$WORKTREE_DIR/.logs/${PKG_MGR}-install-${rel_path//\//-}.log"
+            echo -e "${GREEN}✓ ${PKG_MGR} dependencies installed in ${rel_path}${NC}" >> "$WORKTREE_DIR/.logs/${PKG_MGR}-install-${rel_path//\//-}.log"
+        ) &
+        BACKGROUND_JOBS+=($!)
+    done
+fi
+
+# Detect Rust projects
+CARGO_DIRS=()
+while IFS= read -r -d '' cargo_toml; do
+    cargo_dir="$(dirname "$cargo_toml")"
+    # Only include workspace root or standalone projects
+    if ! grep -q "^\[workspace\]" "$cargo_toml" 2>/dev/null || [ ! -f "$cargo_dir/../Cargo.toml" ]; then
+        CARGO_DIRS+=("$cargo_dir")
+    fi
+done < <(find "$WORKTREE_DIR" -name "Cargo.toml" -not -path "*/target/*" -print0 2>/dev/null)
+
+if [ ${#CARGO_DIRS[@]} -gt 0 ]; then
+    # Check for sccache
+    if command -v sccache &>/dev/null; then
+        SCCACHE_PATH=$(command -v sccache)
+        echo -e "${GREEN}  • sccache found: ${CYAN}$SCCACHE_PATH${NC}"
+    else
+        echo -e "${YELLOW}  • sccache not installed - builds will be slower${NC}"
+        echo -e "${YELLOW}    Install with: ${CYAN}cargo install sccache${NC}"
+        SCCACHE_PATH=""
+    fi
+
+    for cargo_dir in "${CARGO_DIRS[@]}"; do
+        rel_path="${cargo_dir#$WORKTREE_DIR/}"
+        [ "$rel_path" = "$WORKTREE_DIR" ] && rel_path="."
+
+        echo -e "${CYAN}  • Found Cargo.toml in ${rel_path}${NC}"
+
+        # Run cargo check in background
+        (
+            cd "$cargo_dir"
+
+            # Set RUSTC_WRAPPER for sccache if available
+            if [ -n "$SCCACHE_PATH" ]; then
+                export RUSTC_WRAPPER="$SCCACHE_PATH"
+            fi
+
+            # Fetch dependencies first
+            cargo fetch &>"$WORKTREE_DIR/.logs/cargo-fetch-${rel_path//\//-}.log"
+
+            # Then check all dependencies (faster than build, still caches everything)
+            cargo check --all-targets --all-features &>"$WORKTREE_DIR/.logs/cargo-check-${rel_path//\//-}.log"
+
+            echo -e "${GREEN}✓ Cargo dependencies cached in ${rel_path}${NC}" >> "$WORKTREE_DIR/.logs/cargo-check-${rel_path//\//-}.log"
+        ) &
+        BACKGROUND_JOBS+=($!)
+    done
+fi
+
+if [ ${#BACKGROUND_JOBS[@]} -gt 0 ]; then
+    echo -e "${CYAN}  • ${#BACKGROUND_JOBS[@]} background job(s) started${NC}"
+    echo -e "${CYAN}  • Logs: $WORKTREE_DIR/.logs/${NC}"
+    for job_pid in "${BACKGROUND_JOBS[@]}"; do
+        echo -e "${CYAN}    PID: $job_pid${NC}"
+    done
+    echo -e "${GREEN}✓ Background builds started${NC}"
+    echo ""
+    echo -e "${YELLOW}Background builds are still running. Check progress with:${NC}"
+    echo -e "${CYAN}  ls -lt $WORKTREE_DIR/.logs/${NC}"
+    echo -e "${CYAN}  tail -f $WORKTREE_DIR/.logs/*.log${NC}"
+else
+    echo -e "${YELLOW}  • No dependency managers detected${NC}"
+fi
+echo ""
+
+echo -e "${GREEN}${BOLD}✓ Worktree setup complete!${NC}"
+echo ""
 
 # Run mise trust if mise is installed
 if command -v mise &> /dev/null; then
