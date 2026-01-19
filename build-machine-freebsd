@@ -20,7 +20,6 @@ pkg install --yes \
     bash \
     cmake \
     curl \
-    emacs-nox \
     g++ \
     gcc \
     git \

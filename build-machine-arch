@@ -15,7 +15,6 @@ user_exists(){ id "$1" &>/dev/null; }
 pacman -Syu --noconfirm --needed \
        base-devel \
        git \
-       emacs \
        curl \
        gnupg \
        htop \

@@ -25,7 +25,6 @@ apt-get install -yq \
     cmake \
     curl \
     dnsutils \
-    emacs \
     g++ \
     git \
     gnupg \

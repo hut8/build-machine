@@ -35,7 +35,6 @@
         - cowsay
         - curl
         - dnsutils
-        - emacs24
         - gettext
         - git
         - htop

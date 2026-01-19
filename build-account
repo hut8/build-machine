@@ -107,16 +107,6 @@ for f in .sqliterc .tmux.conf .pryrc .p10k.zsh  ; do
   ln -f "$HOME/build-machine/$f" "$HOME/$f"
 done
 
-# emacs
-if [[ ! -d "$HOME/.emacs.d/.git" ]]; then
-  echo "cloning prelude"
-  git clone https://github.com/hut8/prelude "$HOME/.emacs.d"
-  (cd "$HOME/.emacs.d"; git remote set-url origin git@github.com:hut8/prelude)
-else
-  echo "updating prelude"
-  (cd "$HOME/.emacs.d"; git pull)
-fi
-
 pipx install litecli
 pipx install pgcli
 command -v mysql >/dev/null 2>&1 && pipx install mycli
