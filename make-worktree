@@ -75,6 +75,7 @@ SEARCH_PATTERNS=(
     ".env.local"
     ".env.development"
     ".env.production"
+    "appsettings.*.json"
 )
 
 # Build a list of files to check
