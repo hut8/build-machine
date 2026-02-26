@@ -62,6 +62,8 @@ then
     go install golang.org/x/tools/gopls@latest
     go install honnef.co/go/tools/cmd/staticcheck@latest
     go install github.com/google/gops@latest
+    go install github.com/karol-broda/snitch@latest
+    go install github.com/clawscli/claws/cmd/claws@latest
 fi
 
 # Rust
@@ -110,6 +112,7 @@ done
 pipx install litecli
 pipx install pgcli
 command -v mysql >/dev/null 2>&1 && pipx install mycli
+uv tool install sqlit-tui
 
 # bat - the cat replacement
 (( $+commands[bat] )) || cargo install --locked bat
