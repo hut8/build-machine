@@ -1,7 +1,7 @@
 #!/usr/bin/zsh
 # curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account | zsh
 
-set -uo pipefail
+set -euo pipefail
 setopt EXTENDED_GLOB
 set -x
 
