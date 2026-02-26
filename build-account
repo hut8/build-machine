@@ -1,9 +1,16 @@
 #!/usr/bin/zsh
 # curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account | zsh
 
-set -euo pipefail
+set -uo pipefail
 setopt EXTENDED_GLOB
 set -x
+
+failed_installs=()
+try_install() {
+    if ! "$@"; then
+        failed_installs+=("$*")
+    fi
+}
 
 if [[ $(id -u) = 0 ]]; then
     echo 'do not run this as root!'
@@ -57,13 +64,34 @@ fi
 
 # Go
 PATH="/usr/local/go/bin:$PATH"
-if type go &> /dev/null;
-then
-    go install golang.org/x/tools/gopls@latest
-    go install honnef.co/go/tools/cmd/staticcheck@latest
-    go install github.com/google/gops@latest
-    go install github.com/karol-broda/snitch@latest
-    go install github.com/clawscli/claws/cmd/claws@latest
+go_packages=(
+    golang.org/x/tools/gopls
+    honnef.co/go/tools/cmd/staticcheck
+    github.com/google/gops
+    github.com/karol-broda/snitch
+    github.com/clawscli/claws/cmd/claws
+    github.com/chmouel/lazyworktree/cmd/lazyworktree
+    github.com/surge-downloader/surge
+    github.com/legostin/cull
+    github.com/ramonvermeulen/whosthere
+    github.com/edoardottt/cariddi/cmd/cariddi
+    github.com/jbreckmckye/daylight
+    github.com/tokuhirom/dcv
+    github.com/pashkov256/deletor
+    github.com/zyedidia/eget
+    github.com/dundee/gdu
+    github.com/wader/fq
+    github.com/termkit/gama
+    github.com/IAL32/az-tui/cmd/az-tui
+    github.com/Oloruntobi1/pproftui
+    github.com/alajmo/mani
+    github.com/hymkor/csvi/cmd/csvi
+    github.com/brandonyoungdev/tldx
+)
+if type go &> /dev/null; then
+    for pkg in $go_packages; do
+        try_install go install "${pkg}@latest"
+    done
 fi
 
 # Rust
@@ -77,11 +105,11 @@ fi
 # Mise
 mkdir -p "$HOME/.config/mise"
 ln -f "$HOME/build-machine/mise.toml" "$HOME/.config/mise/config.toml"
-(( $+commands[mise] )) || (
-  cargo install mise
+(( $+commands[mise] )) || {
+  try_install cargo install --locked mise
   rehash
   mise install
-)
+}
 
 # Starship prompt
 # (( $+commands[starship] )) || (
@@ -109,19 +137,66 @@ for f in .sqliterc .tmux.conf .pryrc .p10k.zsh  ; do
   ln -f "$HOME/build-machine/$f" "$HOME/$f"
 done
 
-pipx install litecli
-pipx install pgcli
-command -v mysql >/dev/null 2>&1 && pipx install mycli
-uv tool install sqlit-tui
+try_install pipx install litecli
+try_install pipx install pgcli
+command -v mysql >/dev/null 2>&1 && try_install pipx install mycli
 
-# bat - the cat replacement
-(( $+commands[bat] )) || cargo install --locked bat
-# just - task runner
-(( $+commands[just] )) || cargo install --locked just
-# du-dust
-(( $+commands[dust] )) || cargo install du-dust
+uv_tools=(sqlit-tui cloctui)
+for tool in $uv_tools; do
+    try_install uv tool install "$tool"
+done
+
 # Fly.io
-(( $+commands[fly] )) || (curl -L https://fly.io/install.sh | sh)
+if (( ! $+commands[fly] )); then
+    if ! (curl -L https://fly.io/install.sh | sh); then
+        failed_installs+=("curl -L https://fly.io/install.sh | sh")
+    fi
+fi
+
+cargo_crates=(
+    bat
+    just
+    du-dust
+    xfr
+    pik
+    rustscan
+    superseedr
+    tenere
+    television
+    tickrs
+    trippy
+    crates-tui
+    flawz
+    flamelens
+    kdash
+    hexhog
+    intentrace
+    ugdb
+    rustormy
+    systeroid
+    systemd-manager-tui
+    mcat
+    monolith
+    bandwhich
+    binsider
+    cargo-geiger
+    wiki-tui
+    xan
+)
+for crate in $cargo_crates; do
+    try_install cargo install --locked "$crate"
+done
+
+# eget tools (eget installed via go above)
+try_install eget ikebastuz/wiper
+
+# Homebrew (mac only)
+if [[ "$OSTYPE" == darwin* ]]; then
+    brew_formulas=(gromgit/brewtils/taproom ggozad/formulas/oterm)
+    for formula in $brew_formulas; do
+        try_install brew install "$formula"
+    done
+fi
 
 # Claude Code config
 mkdir -p "$HOME/.claude"
@@ -132,3 +207,16 @@ ln -f "$HOME/build-machine/statusline" "$HOME/.claude/statusline"
 mkdir -p "$HOME/.local/bin"
 ln -f "$HOME/build-machine/make-worktree" "$HOME/.local/bin/make-worktree"
 chmod +x "$HOME/.local/bin/make-worktree"
+
+# Report failures
+if (( ${#failed_installs[@]} > 0 )); then
+    echo ''
+    echo '=================================='
+    echo "  ${#failed_installs[@]} install(s) failed:"
+    echo '=================================='
+    for cmd in $failed_installs; do
+        echo "  - $cmd"
+    done
+    echo '=================================='
+    exit 1
+fi
