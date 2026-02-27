@@ -111,13 +111,12 @@ ln -f "$HOME/build-machine/mise.toml" "$HOME/.config/mise/config.toml"
 }
 
 # Starship prompt
-# (( $+commands[starship] )) || (
-#   echo "installing starship"
-#   [[ -d "$HOME/starship" ]] || git clone https://github.com/starship/starship
-#   cd "$HOME/starship"
-#   cargo build --release
-#   sudo ln -f 'target/release/starship' '/usr/local/bin/starship'
-# )
+(( $+commands[starship] )) || try_install cargo install --locked starship
+
+# Helix config
+mkdir -p "$HOME/.config/helix"
+echo "linking helix config"
+ln -f "$HOME/build-machine/helix-config.toml" "$HOME/.config/helix/config.toml"
 
 # Nushell config
 mkdir -p "$HOME/.config/nushell"
@@ -126,9 +125,13 @@ for f in config.nu env.nu ; do
   ln -f "$HOME/build-machine/$f" "$HOME/.config/nushell/$f"
 done
 
-# starship config
-#echo "linking starship config"
-#ln -f "$HOME/build-machine/starship.toml" "$HOME/.config/starship.toml"
+# Starship config
+echo "linking starship config"
+ln -f "$HOME/build-machine/starship.toml" "$HOME/.config/starship.toml"
+
+# Create cache dirs for nushell init scripts (generated at shell startup)
+mkdir -p "$HOME/.cache/starship" "$HOME/.cache/mise"
+touch "$HOME/.cache/starship/init.nu" "$HOME/.cache/mise/init.nu"
 
 # Various config files to be hardlinked
 for f in .sqliterc .tmux.conf .pryrc .p10k.zsh  ; do
@@ -153,6 +156,7 @@ if (( ! $+commands[fly] )); then
 fi
 
 cargo_crates=(
+    nu
     bat
     just
     du-dust

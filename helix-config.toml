@@ -1,0 +1,4 @@
+theme = "heisenberg"
+
+[editor]
+true-color = true
