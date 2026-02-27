@@ -76,7 +76,6 @@ go_packages=(
     github.com/ramonvermeulen/whosthere
     github.com/edoardottt/cariddi/cmd/cariddi
     github.com/jbreckmckye/daylight
-    github.com/tokuhirom/dcv
     github.com/pashkov256/deletor
     github.com/zyedidia/eget
     github.com/dundee/gdu
@@ -189,6 +188,7 @@ done
 
 # eget tools (eget installed via go above)
 try_install eget ikebastuz/wiper
+try_install eget tokuhirom/dcv
 
 # Homebrew (mac only)
 if [[ "$OSTYPE" == darwin* ]]; then
