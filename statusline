@@ -65,15 +65,15 @@ if git rev-parse --is-inside-work-tree &>/dev/null 2>&1; then
         [ "$stashes" -gt 0 ] 2>/dev/null && git_info="$git_info ${COLOR_MAGENTA}*$stashes${COLOR_RESET}"
 
         # Git state (merge, rebase, etc.)
-        if [ -d "$(git rev-parse --git-dir)/rebase-merge" ] || [ -d "$(git rev-parse --git-dir)/rebase-apply" ]; then
+        if [ -d "$git_dir/rebase-merge" ] || [ -d "$git_dir/rebase-apply" ]; then
             git_info="$git_info ${COLOR_MAGENTA}rebase${COLOR_RESET}"
-        elif [ -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
+        elif [ -f "$git_dir/MERGE_HEAD" ]; then
             git_info="$git_info ${COLOR_MAGENTA}merge${COLOR_RESET}"
-        elif [ -f "$(git rev-parse --git-dir)/CHERRY_PICK_HEAD" ]; then
+        elif [ -f "$git_dir/CHERRY_PICK_HEAD" ]; then
             git_info="$git_info ${COLOR_MAGENTA}cherry-pick${COLOR_RESET}"
-        elif [ -f "$(git rev-parse --git-dir)/REVERT_HEAD" ]; then
+        elif [ -f "$git_dir/REVERT_HEAD" ]; then
             git_info="$git_info ${COLOR_MAGENTA}revert${COLOR_RESET}"
-        elif [ -f "$(git rev-parse --git-dir)/BISECT_LOG" ]; then
+        elif [ -f "$git_dir/BISECT_LOG" ]; then
             git_info="$git_info ${COLOR_MAGENTA}bisect${COLOR_RESET}"
         fi
 

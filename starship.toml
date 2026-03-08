@@ -27,9 +27,6 @@ $time\
 [ ](fg:21)\
 """
 
-# Disable the blank line at the start of the prompt
-# add_newline = false
-
 command_timeout = 5000
 
 # You can also replace your username with a neat symbol like   or disable this

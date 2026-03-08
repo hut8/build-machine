@@ -5,7 +5,7 @@ set -euo pipefail
 
 repo_url='https://raw.githubusercontent.com/hut8/build-machine/master'
 
-if ! [ $(id -u) = 0 ]; then
+if ! [ "$(id -u)" = 0 ]; then
     echo 'this script must be run as root'
     exit 1
 fi

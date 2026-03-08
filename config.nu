@@ -290,11 +290,6 @@ let light_theme = {
     shape_variable: purple
 }
 
-# External completer example
-# let carapace_completer = {|spans|
-#     carapace $spans.0 nushell $spans | from json
-# }
-
 
 # The default config record. This is where much of your global configuration is setup.
 $env.config = {

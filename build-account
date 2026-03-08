@@ -87,7 +87,7 @@ go_packages=(
     github.com/hymkor/csvi/cmd/csvi
     github.com/brandonyoungdev/tldx
 )
-if type go &> /dev/null; then
+if (( $+commands[go] )); then
     for pkg in $go_packages; do
         try_install go install "${pkg}@latest"
     done
@@ -97,7 +97,7 @@ fi
 if [[ ! -d "$HOME/.cargo" ]]; then
   echo 'installing rust'
   curl 'https://sh.rustup.rs' -sSf | sh -s -- -y
-  source $HOME/.cargo/env
+  source "$HOME/.cargo/env"
   rustup component add rust-src
 fi
 
@@ -141,7 +141,7 @@ done
 
 try_install pipx install litecli
 try_install pipx install pgcli
-command -v mysql >/dev/null 2>&1 && try_install pipx install mycli
+(( $+commands[mysql] )) && try_install pipx install mycli
 
 uv_tools=(sqlit-tui cloctui)
 for tool in $uv_tools; do
