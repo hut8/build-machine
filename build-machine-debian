@@ -71,8 +71,12 @@ hash rclone 2>/dev/null || {
 [[ -f /swapfile ]] || {
   dd if=/dev/zero of=/swapfile bs=1024 count=8M
   chmod 0600 /swapfile
-  mkswap /swapfile
-  swapon /swapfile
+  if hash mkswap 2>/dev/null; then
+    mkswap /swapfile
+    swapon /swapfile
+  else
+    echo "WARNING: mkswap not found, skipping swap setup"
+  fi
 }
 
 
