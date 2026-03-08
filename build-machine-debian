@@ -33,6 +33,7 @@ apt-get install -yq \
     jq \
     libbz2-dev \
     libffi-dev \
+    libicu-dev \
     liblzma-dev \
     libncurses-dev \
     libpq-dev \

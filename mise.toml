@@ -2,3 +2,4 @@
 node = 'lts'
 python = ['3.10']
 ruby = '3.3.0'
+uv = 'latest'
