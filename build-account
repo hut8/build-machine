@@ -187,7 +187,6 @@ try_install eget casey/just
 try_install eget "${eget_gnu[@]}" bootandy/dust
 try_install eget lance0/xfr
 try_install eget jacek-kurlit/pik
-try_install eget --asset ^.1.zip bee-san/RustScan
 try_install eget "${eget_gnu[@]}" pythops/tenere
 try_install eget "${eget_gnu_tar[@]}" alexpasmantier/television
 try_install eget tarkah/tickrs

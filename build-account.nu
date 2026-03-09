@@ -214,7 +214,6 @@ let eget_tools = [
     [...$eget_gnu "bootandy/dust"]
     ["lance0/xfr"]
     ["jacek-kurlit/pik"]
-    ["--asset" "^.1.zip" "bee-san/RustScan"]
     [...$eget_gnu "pythops/tenere"]
     [...$eget_gnu_tar "alexpasmantier/television"]
     ["tarkah/tickrs"]
