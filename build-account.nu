@@ -210,7 +210,7 @@ $env.EGET_BIN = ($home | path join ".local" "bin")
 
 # On Linux, prefer gnu over musl and tar.gz over .deb to avoid
 # interactive prompts when eget finds multiple matching assets.
-let is_linux = ((^uname -s | str trim) == "Linux")
+let is_linux = ($nu.os-info.name == "linux")
 let eget_gnu = if $is_linux { ["--asset", "gnu"] } else { [] }
 let eget_gnu_tar = if $is_linux { ["--asset", "gnu", "--asset", "tar.gz"] } else { [] }
 
@@ -238,7 +238,7 @@ try { ^eget Builditluc/wiki-tui } catch { $failed_installs = ($failed_installs |
 try { ^eget medialab/xan } catch { $failed_installs = ($failed_installs | append "eget medialab/xan") }
 
 # Homebrew (mac only)
-let is_mac = ((^uname -s | str trim) == "Darwin")
+let is_mac = ($nu.os-info.name == "macos")
 if $is_mac {
     let brew_formulas = ["gromgit/brewtils/taproom", "ggozad/formulas/oterm"]
     for formula in $brew_formulas {
