@@ -91,11 +91,9 @@ let go_packages = [
 
 if (which go | is-not-empty) {
     for pkg in $go_packages {
-        try {
-            ^go install $"($pkg)@latest"
-        } catch {
-            $failed_installs = ($failed_installs | append $"go install ($pkg)@latest")
-        }
+        let desc = $"go install ($pkg)@latest"
+        let r = (do -i { ^go install $"($pkg)@latest" } | complete)
+        if $r.exit_code != 0 { $failed_installs = ($failed_installs | append $desc) }
     }
 }
 
@@ -119,21 +117,18 @@ mkdir $mise_config_dir
 ^ln -f ($build_machine | path join "mise.toml") ($mise_config_dir | path join "config.toml")
 
 if (which mise | is-empty) {
-    try {
-        ^eget --to ($home | path join ".local" "bin") jdx/mise
-        ^mise install
-    } catch {
+    let r = (do -i { ^eget --to ($home | path join ".local" "bin") jdx/mise } | complete)
+    if $r.exit_code != 0 {
         $failed_installs = ($failed_installs | append "eget --to ~/.local/bin jdx/mise")
+    } else {
+        do -i { ^mise install } | complete
     }
 }
 
 # Starship prompt
 if (which starship | is-empty) {
-    try {
-        ^eget --to ($home | path join ".local" "bin") starship/starship
-    } catch {
-        $failed_installs = ($failed_installs | append "eget --to ~/.local/bin starship/starship")
-    }
+    let r = (do -i { ^eget --to ($home | path join ".local" "bin") starship/starship } | complete)
+    if $r.exit_code != 0 { $failed_installs = ($failed_installs | append "eget --to ~/.local/bin starship/starship") }
 }
 
 # Helix config
@@ -154,11 +149,8 @@ for f in ["config.nu", "env.nu"] {
 let nu_plugins = (glob "/usr/local/bin/nu_plugin_*")
 if ($nu_plugins | is-not-empty) {
     for plugin in $nu_plugins {
-        try {
-            ^nu --plugin-add $plugin
-        } catch {
-            $failed_installs = ($failed_installs | append $"nu --plugin-add ($plugin)")
-        }
+        let r = (do -i { ^nu --plugin-add $plugin } | complete)
+        if $r.exit_code != 0 { $failed_installs = ($failed_installs | append $"nu --plugin-add ($plugin)") }
     }
 }
 
@@ -180,29 +172,27 @@ for f in [".sqliterc", ".tmux.conf", ".pryrc", ".p10k.zsh"] {
 }
 
 # Python tools via pipx
-try { ^pipx install litecli } catch { $failed_installs = ($failed_installs | append "pipx install litecli") }
-try { ^pipx install pgcli } catch { $failed_installs = ($failed_installs | append "pipx install pgcli") }
+for tool in ["litecli", "pgcli"] {
+    let r = (do -i { ^pipx install $tool } | complete)
+    if $r.exit_code != 0 { $failed_installs = ($failed_installs | append $"pipx install ($tool)") }
+}
 if (which mysql | is-not-empty) {
-    try { ^pipx install mycli } catch { $failed_installs = ($failed_installs | append "pipx install mycli") }
+    let r = (do -i { ^pipx install mycli } | complete)
+    if $r.exit_code != 0 { $failed_installs = ($failed_installs | append "pipx install mycli") }
 }
 
 # Fly.io
 if (which fly | is-empty) {
-    try {
-        ^curl -L https://fly.io/install.sh | ^sh
-    } catch {
-        $failed_installs = ($failed_installs | append "curl -L https://fly.io/install.sh | sh")
-    }
+    let r = (do -i { ^curl -L https://fly.io/install.sh | ^sh } | complete)
+    if $r.exit_code != 0 { $failed_installs = ($failed_installs | append "curl -L https://fly.io/install.sh | sh") }
 }
 
 # Cargo crates
 let cargo_crates = ["hexhog", "rustormy", "systemd-manager-tui", "mcat"]
 for crate in $cargo_crates {
-    try {
-        ^cargo install --locked $crate
-    } catch {
-        $failed_installs = ($failed_installs | append $"cargo install --locked ($crate)")
-    }
+    let desc = $"cargo install --locked ($crate)"
+    let r = (do -i { ^cargo install --locked $crate } | complete)
+    if $r.exit_code != 0 { $failed_installs = ($failed_installs | append $desc) }
 }
 
 # eget tools (eget installed via go above)
@@ -214,39 +204,44 @@ let is_linux = ($nu.os-info.name == "linux")
 let eget_gnu = if $is_linux { ["--asset", "gnu"] } else { [] }
 let eget_gnu_tar = if $is_linux { ["--asset", "gnu", "--asset", "tar.gz"] } else { [] }
 
-try { ^eget ikebastuz/wiper } catch { $failed_installs = ($failed_installs | append "eget ikebastuz/wiper") }
-try { ^eget tokuhirom/dcv } catch { $failed_installs = ($failed_installs | append "eget tokuhirom/dcv") }
-try { ^eget ...$eget_gnu --file '*' nushell/nushell } catch { $failed_installs = ($failed_installs | append "eget nushell/nushell") }
-try { ^eget ...$eget_gnu sharkdp/bat } catch { $failed_installs = ($failed_installs | append "eget sharkdp/bat") }
-try { ^eget casey/just } catch { $failed_installs = ($failed_installs | append "eget casey/just") }
-try { ^eget ...$eget_gnu bootandy/dust } catch { $failed_installs = ($failed_installs | append "eget bootandy/dust") }
-try { ^eget lance0/xfr } catch { $failed_installs = ($failed_installs | append "eget lance0/xfr") }
-try { ^eget jacek-kurlit/pik } catch { $failed_installs = ($failed_installs | append "eget jacek-kurlit/pik") }
-try { ^eget --asset "^.1.zip" bee-san/RustScan } catch { $failed_installs = ($failed_installs | append "eget bee-san/RustScan") }
-try { ^eget pythops/tenere } catch { $failed_installs = ($failed_installs | append "eget pythops/tenere") }
-try { ^eget ...$eget_gnu_tar alexpasmantier/television } catch { $failed_installs = ($failed_installs | append "eget alexpasmantier/television") }
-try { ^eget tarkah/tickrs } catch { $failed_installs = ($failed_installs | append "eget tarkah/tickrs") }
-try { ^eget ...$eget_gnu_tar fujiapple852/trippy } catch { $failed_installs = ($failed_installs | append "eget fujiapple852/trippy") }
-try { ^eget YS-L/flamelens } catch { $failed_installs = ($failed_installs | append "eget YS-L/flamelens") }
-try { ^eget kdash-rs/kdash } catch { $failed_installs = ($failed_installs | append "eget kdash-rs/kdash") }
-try { ^eget sectordistrict/intentrace } catch { $failed_installs = ($failed_installs | append "eget sectordistrict/intentrace") }
-try { ^eget ...$eget_gnu_tar --asset "^all-features" orhun/systeroid } catch { $failed_installs = ($failed_installs | append "eget orhun/systeroid") }
-try { ^eget Y2Z/monolith } catch { $failed_installs = ($failed_installs | append "eget Y2Z/monolith") }
-try { ^eget ...$eget_gnu imsnif/bandwhich } catch { $failed_installs = ($failed_installs | append "eget imsnif/bandwhich") }
-try { ^eget ...$eget_gnu_tar orhun/binsider } catch { $failed_installs = ($failed_installs | append "eget orhun/binsider") }
-try { ^eget Builditluc/wiki-tui } catch { $failed_installs = ($failed_installs | append "eget Builditluc/wiki-tui") }
-try { ^eget medialab/xan } catch { $failed_installs = ($failed_installs | append "eget medialab/xan") }
+# eget tools: [description, ...args]
+let eget_tools = [
+    ["ikebastuz/wiper"]
+    ["tokuhirom/dcv"]
+    [...$eget_gnu "--file" "*" "nushell/nushell"]
+    [...$eget_gnu "sharkdp/bat"]
+    ["casey/just"]
+    [...$eget_gnu "bootandy/dust"]
+    ["lance0/xfr"]
+    ["jacek-kurlit/pik"]
+    ["--asset" "^.1.zip" "bee-san/RustScan"]
+    ["pythops/tenere"]
+    [...$eget_gnu_tar "alexpasmantier/television"]
+    ["tarkah/tickrs"]
+    [...$eget_gnu_tar "fujiapple852/trippy"]
+    ["YS-L/flamelens"]
+    ["kdash-rs/kdash"]
+    ["sectordistrict/intentrace"]
+    [...$eget_gnu_tar "--asset" "^all-features" "orhun/systeroid"]
+    ["Y2Z/monolith"]
+    [...$eget_gnu "imsnif/bandwhich"]
+    [...$eget_gnu_tar "orhun/binsider"]
+    ["Builditluc/wiki-tui"]
+    ["medialab/xan"]
+]
+
+for args in $eget_tools {
+    let repo = ($args | last)
+    let r = (do -i { ^eget ...$args } | complete)
+    if $r.exit_code != 0 { $failed_installs = ($failed_installs | append $"eget ($repo)") }
+}
 
 # Homebrew (mac only)
-let is_mac = ($nu.os-info.name == "macos")
-if $is_mac {
+if ($nu.os-info.name == "macos") {
     let brew_formulas = ["gromgit/brewtils/taproom", "ggozad/formulas/oterm"]
     for formula in $brew_formulas {
-        try {
-            ^brew install $formula
-        } catch {
-            $failed_installs = ($failed_installs | append $"brew install ($formula)")
-        }
+        let r = (do -i { ^brew install $formula } | complete)
+        if $r.exit_code != 0 { $failed_installs = ($failed_installs | append $"brew install ($formula)") }
     }
 }
 
