@@ -162,26 +162,36 @@ done
 
 # eget tools (eget installed via go above)
 export EGET_BIN="$HOME/.local/bin"
+
+# On Linux, prefer gnu over musl and tar.gz over .deb to avoid
+# interactive prompts when eget finds multiple matching assets.
+eget_gnu=()
+eget_gnu_tar=()
+if [[ "$OSTYPE" == linux* ]]; then
+    eget_gnu=(--asset gnu)
+    eget_gnu_tar=(--asset gnu --asset tar.gz)
+fi
+
 try_install eget ikebastuz/wiper
 try_install eget tokuhirom/dcv
-try_install eget --asset gnu --file '*' nushell/nushell
-try_install eget --asset gnu sharkdp/bat
+try_install eget "${eget_gnu[@]}" --file '*' nushell/nushell
+try_install eget "${eget_gnu[@]}" sharkdp/bat
 try_install eget casey/just
-try_install eget --asset gnu bootandy/dust
+try_install eget "${eget_gnu[@]}" bootandy/dust
 try_install eget lance0/xfr
 try_install eget jacek-kurlit/pik
 try_install eget --asset ^.1.zip bee-san/RustScan
 try_install eget pythops/tenere
-try_install eget --asset gnu --asset tar.gz alexpasmantier/television
+try_install eget "${eget_gnu_tar[@]}" alexpasmantier/television
 try_install eget tarkah/tickrs
-try_install eget --asset gnu --asset tar.gz fujiapple852/trippy
+try_install eget "${eget_gnu_tar[@]}" fujiapple852/trippy
 try_install eget YS-L/flamelens
 try_install eget kdash-rs/kdash
 try_install eget sectordistrict/intentrace
-try_install eget --asset gnu --asset tar.gz --asset ^all-features orhun/systeroid
+try_install eget "${eget_gnu_tar[@]}" --asset ^all-features orhun/systeroid
 try_install eget Y2Z/monolith
-try_install eget --asset gnu imsnif/bandwhich
-try_install eget --asset gnu --asset tar.gz orhun/binsider
+try_install eget "${eget_gnu[@]}" imsnif/bandwhich
+try_install eget "${eget_gnu_tar[@]}" orhun/binsider
 try_install eget Builditluc/wiki-tui
 try_install eget medialab/xan
 
