@@ -125,6 +125,13 @@ for f in config.nu env.nu ; do
   ln -f "$HOME/build-machine/$f" "$HOME/.config/nushell/$f"
 done
 
+# Register nushell plugins (installed to /usr/local/bin by build-machine-debian)
+if (( $+commands[nu] )); then
+    for plugin in /usr/local/bin/nu_plugin_*(N); do
+        [[ -x "$plugin" ]] && try_install nu --plugin-add "$plugin"
+    done
+fi
+
 # Starship config
 echo "linking starship config"
 ln -f "$HOME/build-machine/starship.toml" "$HOME/.config/starship.toml"

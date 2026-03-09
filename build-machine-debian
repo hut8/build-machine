@@ -137,5 +137,44 @@ fi
 
 curl -sSL "$repo_url/sudoers" > /etc/sudoers.d/liam
 
+# Install Nushell and all plugins to /usr/local/bin
+echo "Installing Nushell..."
+arch=$(uname -m)
+nushell_target="${arch}-unknown-linux-gnu"
+nushell_release=$(curl -sSL https://api.github.com/repos/nushell/nushell/releases/latest)
+nushell_tag=$(echo "$nushell_release" | jq -r '.tag_name')
+echo "  Nushell release: ${nushell_tag}"
+
+nushell_tmpdir=$(mktemp -d)
+
+# Download all tar.gz assets matching our target
+echo "$nushell_release" | jq -r '.assets[].browser_download_url' \
+    | grep "${nushell_target}" \
+    | grep '\.tar\.gz$' \
+    | while read -r url; do
+        filename=$(basename "$url")
+        echo "  Downloading ${filename}"
+        curl -sSL "$url" -o "${nushell_tmpdir}/${filename}"
+        tar -xzf "${nushell_tmpdir}/${filename}" -C "${nushell_tmpdir}"
+    done
+
+# Install nu binary
+find "${nushell_tmpdir}" -maxdepth 2 -name "nu" -type f | head -1 | while read -r binary; do
+    cp "$binary" /usr/local/bin/nu
+    chmod +x /usr/local/bin/nu
+    echo "  Installed nu"
+done
+
+# Install all plugin binaries
+find "${nushell_tmpdir}" -maxdepth 2 -name "nu_plugin_*" -type f | while read -r binary; do
+    name=$(basename "$binary")
+    cp "$binary" "/usr/local/bin/${name}"
+    chmod +x "/usr/local/bin/${name}"
+    echo "  Installed ${name}"
+done
+
+rm -rf "${nushell_tmpdir}"
+echo "Nushell ${nushell_tag} installed to /usr/local/bin"
+
 curl -sSL "$repo_url/build-account" |
   sudo --set-home -u liam /usr/bin/zsh
