@@ -3,7 +3,7 @@
 
 set -euo pipefail
 setopt EXTENDED_GLOB
-set -x
+set +x
 
 failed_installs=()
 try_install() {
@@ -164,25 +164,24 @@ done
 export EGET_BIN="$HOME/.local/bin"
 try_install eget ikebastuz/wiper
 try_install eget tokuhirom/dcv
-try_install eget nushell/nushell
-try_install eget sharkdp/bat
+try_install eget --asset gnu --file '*' nushell/nushell
+try_install eget --asset gnu sharkdp/bat
 try_install eget casey/just
-try_install eget bootandy/dust
+try_install eget --asset gnu bootandy/dust
 try_install eget lance0/xfr
 try_install eget jacek-kurlit/pik
-try_install eget bee-san/RustScan
+try_install eget --asset ^.1.zip bee-san/RustScan
 try_install eget pythops/tenere
-try_install eget alexpasmantier/television
+try_install eget --asset gnu --asset tar.gz alexpasmantier/television
 try_install eget tarkah/tickrs
-try_install eget fujiapple852/trippy
-try_install eget orhun/flawz
+try_install eget --asset gnu --asset tar.gz fujiapple852/trippy
 try_install eget YS-L/flamelens
 try_install eget kdash-rs/kdash
 try_install eget sectordistrict/intentrace
-try_install eget orhun/systeroid
+try_install eget --asset gnu --asset tar.gz --asset ^all-features orhun/systeroid
 try_install eget Y2Z/monolith
-try_install eget imsnif/bandwhich
-try_install eget orhun/binsider
+try_install eget --asset gnu imsnif/bandwhich
+try_install eget --asset gnu --asset tar.gz orhun/binsider
 try_install eget Builditluc/wiki-tui
 try_install eget medialab/xan
 
