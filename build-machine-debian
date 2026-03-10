@@ -137,5 +137,11 @@ fi
 
 curl -sSL "$repo_url/sudoers" > /etc/sudoers.d/liam
 
+# Install eget (used below for nushell, also available for build-account)
+GOBIN=/usr/local/bin /usr/local/go/bin/go install github.com/zyedidia/eget@latest
+
+# Install Nushell and all plugins to /usr/local/bin
+eget --all --to /usr/local/bin nushell/nushell --asset gnu
+
 curl -sSL "$repo_url/build-account" |
   sudo --set-home -u liam /usr/bin/zsh

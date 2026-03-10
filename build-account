@@ -125,6 +125,13 @@ for f in config.nu env.nu ; do
   ln -f "$HOME/build-machine/$f" "$HOME/.config/nushell/$f"
 done
 
+# Register nushell plugins (installed to /usr/local/bin by build-machine-debian)
+if (( $+commands[nu] )); then
+    for plugin in /usr/local/bin/nu_plugin_*(N); do
+        [[ -x "$plugin" ]] && try_install nu --plugin-add "$plugin"
+    done
+fi
+
 # Starship config
 echo "linking starship config"
 ln -f "$HOME/build-machine/starship.toml" "$HOME/.config/starship.toml"
@@ -180,20 +187,19 @@ try_install eget casey/just
 try_install eget "${eget_gnu[@]}" bootandy/dust
 try_install eget lance0/xfr
 try_install eget jacek-kurlit/pik
-try_install eget --asset ^.1.zip bee-san/RustScan
-try_install eget pythops/tenere
+try_install eget "${eget_gnu[@]}" pythops/tenere
 try_install eget "${eget_gnu_tar[@]}" alexpasmantier/television
 try_install eget tarkah/tickrs
 try_install eget "${eget_gnu_tar[@]}" fujiapple852/trippy
-try_install eget YS-L/flamelens
-try_install eget kdash-rs/kdash
+try_install eget "${eget_gnu[@]}" YS-L/flamelens
+try_install eget --asset ^musl kdash-rs/kdash
 try_install eget sectordistrict/intentrace
-try_install eget "${eget_gnu_tar[@]}" --asset ^all-features orhun/systeroid
+try_install eget "${eget_gnu_tar[@]}" --asset ^all-features --asset ^.sha512 --asset ^.sig orhun/systeroid
 try_install eget Y2Z/monolith
 try_install eget "${eget_gnu[@]}" imsnif/bandwhich
-try_install eget "${eget_gnu_tar[@]}" orhun/binsider
+try_install eget "${eget_gnu_tar[@]}" --asset ^.sha512 --asset ^.sig orhun/binsider
 try_install eget Builditluc/wiki-tui
-try_install eget medialab/xan
+try_install eget "${eget_gnu_tar[@]}" medialab/xan
 
 # Homebrew (mac only)
 if [[ "$OSTYPE" == darwin* ]]; then
