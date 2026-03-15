@@ -61,6 +61,7 @@ apt-get install -yq \
     tmux \
     toilet \
     tree \
+    unzip \
     wget \
     zsh
 
