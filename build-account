@@ -111,7 +111,7 @@ ln -f "$HOME/build-machine/mise.toml" "$HOME/.config/mise/config.toml"
 }
 
 # Starship prompt
-(( $+commands[starship] )) || try_install eget --to ~/.local/bin starship/starship
+(( $+commands[starship] )) || try_install eget --to ~/.local/bin --asset gnu starship/starship
 
 # Helix config
 mkdir -p "$HOME/.config/helix"

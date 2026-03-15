@@ -127,7 +127,7 @@ if (which mise | is-empty) {
 
 # Starship prompt
 if (which starship | is-empty) {
-    let r = (do -i { ^eget --to ($home | path join ".local" "bin") starship/starship } | complete)
+    let r = (do -i { ^eget --to ($home | path join ".local" "bin") --asset gnu starship/starship } | complete)
     if $r.exit_code != 0 { $failed_installs = ($failed_installs | append "eget --to ~/.local/bin starship/starship") }
 }
 
