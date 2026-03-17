@@ -98,6 +98,15 @@ curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o "$tru
 [[ ! -f $trusted_keyrings/caddy-stable-archive-keyring.gpg ]] && curl 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o "$trusted_keyrings/caddy-stable-archive-keyring.gpg"
 echo "deb [signed-by=$trusted_keyrings/caddy-stable-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | tee /etc/apt/sources.list.d/caddy-stable.list
 
+# GitHub CLI
+mkdir -p -m 755 /etc/apt/keyrings
+wget -nv -O /etc/apt/keyrings/githubcli-archive-keyring.gpg https://cli.github.com/packages/githubcli-archive-keyring.gpg
+chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list
+
+apt-get update
+apt-get install -yq gh
+
 # Install Go
 arch=$(uname -m | sed -e 's/x86_64/amd64/g' -e 's/aarch64/arm64/g')
 os=$(uname -s | tr '[:upper:]' '[:lower:]')
