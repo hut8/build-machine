@@ -193,7 +193,7 @@ try_install eget tarkah/tickrs
 try_install eget "${eget_gnu_tar[@]}" fujiapple852/trippy
 try_install eget "${eget_gnu[@]}" YS-L/flamelens
 try_install eget --asset '^musl' kdash-rs/kdash
-try_install eget sectordistrict/intentrace
+[[ "$OSTYPE" != darwin* ]] && try_install eget sectordistrict/intentrace
 [[ "$OSTYPE" != darwin* ]] && try_install eget "${eget_gnu_tar[@]}" --asset '^all-features' --asset '^.sha512' --asset '^.sig' orhun/systeroid
 try_install eget Y2Z/monolith
 try_install eget "${eget_gnu[@]}" imsnif/bandwhich
