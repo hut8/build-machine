@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/env zsh
 # curl -sSL https://raw.githubusercontent.com/hut8/build-machine/master/build-account | zsh
 
 set -euo pipefail
