@@ -222,7 +222,7 @@ let eget_tools = [
     ["--asset" "^musl" "kdash-rs/kdash"]
     ...(if $is_linux { [["sectordistrict/intentrace"]] } else { [] })
     ...(if $is_linux { [[...$eget_gnu_tar "--asset" "^all-features" "--asset" "^.sha512" "--asset" "^.sig" "orhun/systeroid"]] } else { [] })
-    ["Y2Z/monolith"]
+    ...(if $is_linux { [["Y2Z/monolith"]] } else { [] })
     [...$eget_gnu "imsnif/bandwhich"]
     [...$eget_gnu_tar "--asset" "^.sha512" "--asset" "^.sig" "orhun/binsider"]
     ["Builditluc/wiki-tui"]
@@ -231,6 +231,7 @@ let eget_tools = [
 
 for args in $eget_tools {
     let repo = ($args | last)
+    print $"=> eget ($args | str join ' ')"
     let r = (do -i { ^eget ...$args } | complete)
     if $r.exit_code != 0 { $failed_installs = ($failed_installs | append $"eget ($repo)") }
 }

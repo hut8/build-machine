@@ -7,6 +7,7 @@ set +x
 
 failed_installs=()
 try_install() {
+    echo -e "${CYAN:-}=> $*${NC:-}"
     if ! "$@"; then
         failed_installs+=("$*")
     fi
@@ -195,7 +196,7 @@ try_install eget "${eget_gnu[@]}" YS-L/flamelens
 try_install eget --asset '^musl' kdash-rs/kdash
 [[ "$OSTYPE" != darwin* ]] && try_install eget sectordistrict/intentrace
 [[ "$OSTYPE" != darwin* ]] && try_install eget "${eget_gnu_tar[@]}" --asset '^all-features' --asset '^.sha512' --asset '^.sig' orhun/systeroid
-try_install eget Y2Z/monolith
+[[ "$OSTYPE" != darwin* ]] && try_install eget Y2Z/monolith
 try_install eget "${eget_gnu[@]}" imsnif/bandwhich
 try_install eget "${eget_gnu_tar[@]}" --asset '^.sha512' --asset '^.sig' orhun/binsider
 try_install eget Builditluc/wiki-tui

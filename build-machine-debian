@@ -14,6 +14,26 @@ export DEBIAN_FRONTEND=noninteractive
 
 user_exists(){ id "$1" &>/dev/null; }
 
+trusted_keyrings='/etc/apt/trusted.gpg.d'
+
+# Gcloud repo
+echo "deb [signed-by=$trusted_keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+[[ ! -f "$trusted_keyrings/cloud.google.asc" ]] && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee "$trusted_keyrings/cloud.google.asc"
+
+# Postgres repo
+echo "deb [signed-by=$trusted_keyrings/apt.postgresql.org.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
+curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o "$trusted_keyrings/apt.postgresql.org.gpg"
+
+# Caddy repo
+[[ ! -f $trusted_keyrings/caddy-stable-archive-keyring.gpg ]] && curl 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o "$trusted_keyrings/caddy-stable-archive-keyring.gpg"
+echo "deb [signed-by=$trusted_keyrings/caddy-stable-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | tee /etc/apt/sources.list.d/caddy-stable.list
+
+# GitHub CLI repo
+mkdir -p -m 755 /etc/apt/keyrings
+wget -nv -O /etc/apt/keyrings/githubcli-archive-keyring.gpg https://cli.github.com/packages/githubcli-archive-keyring.gpg
+chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list
+
 apt-get update
 apt-get upgrade -yq -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
 apt-get install -yq \
@@ -26,6 +46,7 @@ apt-get install -yq \
     curl \
     dnsutils \
     g++ \
+    gh \
     git \
     gnupg \
     htop \
@@ -69,7 +90,6 @@ hash rclone 2>/dev/null || {
     curl https://rclone.org/install.sh | bash
 }
 
-
 [[ -f /swapfile ]] || {
   dd if=/dev/zero of=/swapfile bs=1024 count=8M
   chmod 0600 /swapfile
@@ -80,32 +100,6 @@ hash rclone 2>/dev/null || {
     echo "WARNING: mkswap not found, skipping swap setup"
   fi
 }
-
-
-trusted_keyrings='/etc/apt/trusted.gpg.d'
-
-
-
-# Gcloud
-echo "deb [signed-by=$trusted_keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
-[[ ! -f "$trusted_keyrings/cloud.google.asc" ]] && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee "$trusted_keyrings/cloud.google.asc"
-
-# Postgres repo
-echo "deb [signed-by=$trusted_keyrings/apt.postgresql.org.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
-curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o "$trusted_keyrings/apt.postgresql.org.gpg"
-
-# Caddy repo
-[[ ! -f $trusted_keyrings/caddy-stable-archive-keyring.gpg ]] && curl 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o "$trusted_keyrings/caddy-stable-archive-keyring.gpg"
-echo "deb [signed-by=$trusted_keyrings/caddy-stable-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" | tee /etc/apt/sources.list.d/caddy-stable.list
-
-# GitHub CLI
-mkdir -p -m 755 /etc/apt/keyrings
-wget -nv -O /etc/apt/keyrings/githubcli-archive-keyring.gpg https://cli.github.com/packages/githubcli-archive-keyring.gpg
-chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list
-
-apt-get update
-apt-get install -yq gh
 
 # Install Go
 arch=$(uname -m | sed -e 's/x86_64/amd64/g' -e 's/aarch64/arm64/g')
