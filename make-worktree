@@ -76,6 +76,7 @@ SEARCH_PATTERNS=(
     ".env.development"
     ".env.production"
     "appsettings.*.json"
+    "master.key"
 )
 
 # Build a list of files to check
@@ -116,7 +117,8 @@ cd "$WORKTREE_DIR"
 # Detect and install dependencies
 echo -e "${BLUE}[3/3]${NC} ${BOLD}Detecting dependency managers...${NC}"
 BACKGROUND_JOBS=()
-mkdir -p "$WORKTREE_DIR/.logs"
+LOG_DIR="$HOME/worktrees/logs/$PROJECT_NAME/$BRANCH_NAME"
+mkdir -p "$LOG_DIR"
 
 # Detect JavaScript package managers by lock file presence
 LOCKFILE_PATTERNS=(
@@ -145,8 +147,8 @@ for lockfile_entry in "${LOCKFILE_PATTERNS[@]}"; do
         # Run package manager in background
         (
             cd "$package_dir"
-            $pkg_cmd &>"$WORKTREE_DIR/.logs/${pkg_mgr}-install-${rel_path//\//-}.log"
-            echo -e "${GREEN}✓ ${pkg_mgr} dependencies installed in ${rel_path}${NC}" >> "$WORKTREE_DIR/.logs/${pkg_mgr}-install-${rel_path//\//-}.log"
+            $pkg_cmd &>"$LOG_DIR/${pkg_mgr}-install-${rel_path//\//-}.log"
+            echo -e "${GREEN}✓ ${pkg_mgr} dependencies installed in ${rel_path}${NC}" >> "$LOG_DIR/${pkg_mgr}-install-${rel_path//\//-}.log"
         ) &
         BACKGROUND_JOBS+=($!)
     done < <(find "$WORKTREE_DIR" -name "$lockfile_name" -not -path "*/node_modules/*" -print0 2>/dev/null)
@@ -189,12 +191,12 @@ if [ ${#CARGO_DIRS[@]} -gt 0 ]; then
             fi
 
             # Fetch dependencies first
-            cargo fetch &>"$WORKTREE_DIR/.logs/cargo-fetch-${rel_path//\//-}.log"
+            cargo fetch &>"$LOG_DIR/cargo-fetch-${rel_path//\//-}.log"
 
             # Then check all dependencies (faster than build, still caches everything)
-            cargo check --all-targets --all-features &>"$WORKTREE_DIR/.logs/cargo-check-${rel_path//\//-}.log"
+            cargo check --all-targets --all-features &>"$LOG_DIR/cargo-check-${rel_path//\//-}.log"
 
-            echo -e "${GREEN}✓ Cargo dependencies cached in ${rel_path}${NC}" >> "$WORKTREE_DIR/.logs/cargo-check-${rel_path//\//-}.log"
+            echo -e "${GREEN}✓ Cargo dependencies cached in ${rel_path}${NC}" >> "$LOG_DIR/cargo-check-${rel_path//\//-}.log"
         ) &
         BACKGROUND_JOBS+=($!)
     done
@@ -202,15 +204,15 @@ fi
 
 if [ ${#BACKGROUND_JOBS[@]} -gt 0 ]; then
     echo -e "${CYAN}  • ${#BACKGROUND_JOBS[@]} background job(s) started${NC}"
-    echo -e "${CYAN}  • Logs: $WORKTREE_DIR/.logs/${NC}"
+    echo -e "${CYAN}  • Logs: $LOG_DIR/${NC}"
     for job_pid in "${BACKGROUND_JOBS[@]}"; do
         echo -e "${CYAN}    PID: $job_pid${NC}"
     done
     echo -e "${GREEN}✓ Background builds started${NC}"
     echo ""
     echo -e "${YELLOW}Background builds are still running. Check progress with:${NC}"
-    echo -e "${CYAN}  ls -lt $WORKTREE_DIR/.logs/${NC}"
-    echo -e "${CYAN}  tail -f $WORKTREE_DIR/.logs/*.log${NC}"
+    echo -e "${CYAN}  ls -lt $LOG_DIR/${NC}"
+    echo -e "${CYAN}  tail -f $LOG_DIR/*.log${NC}"
 else
     echo -e "${YELLOW}  • No dependency managers detected${NC}"
 fi
