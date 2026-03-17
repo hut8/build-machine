@@ -193,14 +193,39 @@ try_install eget "${eget_gnu_tar[@]}" alexpasmantier/television
 try_install eget tarkah/tickrs
 try_install eget "${eget_gnu_tar[@]}" fujiapple852/trippy
 try_install eget "${eget_gnu[@]}" YS-L/flamelens
-try_install eget --asset '^musl' kdash-rs/kdash
+# kdash: on Linux exclude musl, on macOS select macos
+if [[ "$OSTYPE" == darwin* ]]; then
+    try_install eget --asset macos kdash-rs/kdash
+else
+    try_install eget --asset '^musl' kdash-rs/kdash
+fi
 [[ "$OSTYPE" != darwin* ]] && try_install eget sectordistrict/intentrace
 [[ "$OSTYPE" != darwin* ]] && try_install eget "${eget_gnu_tar[@]}" --asset '^all-features' --asset '^.sha512' --asset '^.sig' orhun/systeroid
 [[ "$OSTYPE" != darwin* ]] && try_install eget Y2Z/monolith
-try_install eget "${eget_gnu[@]}" imsnif/bandwhich
-try_install eget "${eget_gnu_tar[@]}" --asset '^.sha512' --asset '^.sig' orhun/binsider
-try_install eget Builditluc/wiki-tui
-try_install eget "${eget_gnu_tar[@]}" medialab/xan
+# bandwhich: on Linux use gnu, on macOS use darwin
+if [[ "$OSTYPE" == darwin* ]]; then
+    try_install eget --asset darwin imsnif/bandwhich
+else
+    try_install eget --asset gnu imsnif/bandwhich
+fi
+# binsider: on Linux use gnu and exclude sigs, on macOS use darwin and exclude sigs
+if [[ "$OSTYPE" == darwin* ]]; then
+    try_install eget --asset darwin --asset '^.sha512' --asset '^.sig' orhun/binsider
+else
+    try_install eget --asset gnu --asset tar.gz --asset '^.sha512' --asset '^.sig' orhun/binsider
+fi
+# wiki-tui: select by OS
+if [[ "$OSTYPE" == darwin* ]]; then
+    try_install eget --asset macos Builditluc/wiki-tui
+else
+    try_install eget --asset linux Builditluc/wiki-tui
+fi
+# xan: on Linux use gnu, on macOS use darwin
+if [[ "$OSTYPE" == darwin* ]]; then
+    try_install eget --asset darwin medialab/xan
+else
+    try_install eget "${eget_gnu_tar[@]}" medialab/xan
+fi
 
 # Homebrew (mac only)
 if [[ "$OSTYPE" == darwin* ]]; then

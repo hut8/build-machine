@@ -201,6 +201,7 @@ $env.EGET_BIN = ($home | path join ".local" "bin")
 # On Linux, prefer gnu over musl and tar.gz over .deb to avoid
 # interactive prompts when eget finds multiple matching assets.
 let is_linux = ($nu.os-info.name == "linux")
+let is_macos = ($nu.os-info.name == "macos")
 let eget_gnu = if $is_linux { ["--asset", "gnu"] } else { [] }
 let eget_gnu_tar = if $is_linux { ["--asset", "gnu", "--asset", "tar.gz"] } else { [] }
 
@@ -219,14 +220,19 @@ let eget_tools = [
     ["tarkah/tickrs"]
     [...$eget_gnu_tar "fujiapple852/trippy"]
     [...$eget_gnu "YS-L/flamelens"]
-    ["--asset" "^musl" "kdash-rs/kdash"]
+    # kdash: on Linux exclude musl, on macOS select macos
+    ...(if $is_macos { [["--asset" "macos" "kdash-rs/kdash"]] } else { [["--asset" "^musl" "kdash-rs/kdash"]] })
     ...(if $is_linux { [["sectordistrict/intentrace"]] } else { [] })
     ...(if $is_linux { [[...$eget_gnu_tar "--asset" "^all-features" "--asset" "^.sha512" "--asset" "^.sig" "orhun/systeroid"]] } else { [] })
     ...(if $is_linux { [["Y2Z/monolith"]] } else { [] })
-    [...$eget_gnu "imsnif/bandwhich"]
-    [...$eget_gnu_tar "--asset" "^.sha512" "--asset" "^.sig" "orhun/binsider"]
-    ["Builditluc/wiki-tui"]
-    [...$eget_gnu_tar "medialab/xan"]
+    # bandwhich: on Linux use gnu, on macOS use darwin
+    ...(if $is_macos { [["--asset" "darwin" "imsnif/bandwhich"]] } else { [[...$eget_gnu "imsnif/bandwhich"]] })
+    # binsider: on Linux use gnu and exclude sigs, on macOS use darwin and exclude sigs
+    ...(if $is_macos { [["--asset" "darwin" "--asset" "^.sha512" "--asset" "^.sig" "orhun/binsider"]] } else { [[...$eget_gnu_tar "--asset" "^.sha512" "--asset" "^.sig" "orhun/binsider"]] })
+    # wiki-tui: select by OS
+    ...(if $is_macos { [["--asset" "macos" "Builditluc/wiki-tui"]] } else { [["--asset" "linux" "Builditluc/wiki-tui"]] })
+    # xan: on Linux use gnu, on macOS use darwin
+    ...(if $is_macos { [["--asset" "darwin" "medialab/xan"]] } else { [[...$eget_gnu_tar "medialab/xan"]] })
 ]
 
 for args in $eget_tools {
