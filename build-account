@@ -229,7 +229,7 @@ fi
 
 # Homebrew (mac only)
 if [[ "$OSTYPE" == darwin* ]]; then
-    brew_formulas=(gromgit/brewtils/taproom ggozad/formulas/oterm)
+    brew_formulas=(gromgit/brewtils/taproom)
     for formula in $brew_formulas; do
         try_install brew install "$formula"
     done

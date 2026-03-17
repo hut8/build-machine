@@ -244,7 +244,7 @@ for args in $eget_tools {
 
 # Homebrew (mac only)
 if ($nu.os-info.name == "macos") {
-    let brew_formulas = ["gromgit/brewtils/taproom", "ggozad/formulas/oterm"]
+    let brew_formulas = ["gromgit/brewtils/taproom"]
     for formula in $brew_formulas {
         let r = (do -i { ^brew install $formula } | complete)
         if $r.exit_code != 0 { $failed_installs = ($failed_installs | append $"brew install ($formula)") }
