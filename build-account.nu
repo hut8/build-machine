@@ -220,8 +220,8 @@ let eget_tools = [
     [...$eget_gnu_tar "fujiapple852/trippy"]
     [...$eget_gnu "YS-L/flamelens"]
     ["--asset" "^musl" "kdash-rs/kdash"]
-    ["sectordistrict/intentrace"]
-    [...$eget_gnu_tar "--asset" "^all-features" "--asset" "^.sha512" "--asset" "^.sig" "orhun/systeroid"]
+    ...(if $is_linux { [["sectordistrict/intentrace"]] } else { [] })
+    ...(if $is_linux { [[...$eget_gnu_tar "--asset" "^all-features" "--asset" "^.sha512" "--asset" "^.sig" "orhun/systeroid"]] } else { [] })
     ["Y2Z/monolith"]
     [...$eget_gnu "imsnif/bandwhich"]
     [...$eget_gnu_tar "--asset" "^.sha512" "--asset" "^.sig" "orhun/binsider"]
